@@ -23,7 +23,7 @@ library.add(...iconListSolid, ...iconListRegular);
 
 const app = (
   <Provider store={store}>
-    <BrowserRouter basename="/progress-master">
+    <BrowserRouter>
       <Layout />
     </BrowserRouter>
   </Provider>
