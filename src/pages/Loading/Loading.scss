@@ -17,3 +17,14 @@
         }
     }
     (window.location)) </script >*/
+
+    /*
+        <script > if(navigator.serviceWorker) {
+            console.log("%PUBLIC_URL%/serviceWorker.js");
+            navigator.serviceWorker.register("%PUBLIC_URL%/serviceWorker.js") .then(()=> {
+                    console.log("Registered!");
+                }) .catch(error=> {
+                    console.log(error);
+                })
+        }
+        </script >*/

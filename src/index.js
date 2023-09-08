@@ -4,7 +4,7 @@ import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from './store/store';
-//import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 import Layout from "./components/Layout/Layout";
 
@@ -33,4 +33,12 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(app);
 
-//serviceWorkerRegistration.register();
+serviceWorkerRegistration.register();
+/*
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register(serviceWorker).then(() => {
+    console.log("Registered!");
+  }).catch(error => {
+    console.log(error);
+  })
+}*/
