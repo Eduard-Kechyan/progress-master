@@ -1,17 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "./index.scss";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from './store/store';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+import Layout from "./components/Layout/Layout";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import * as IconsSolid from "@fortawesome/free-solid-svg-icons";
+import * as IconsRegular from "@fortawesome/free-regular-svg-icons";
+
+const iconListSolid = Object.keys(IconsSolid)
+  .filter((key) => key !== "fas" && key !== "prefix")
+  .map((icon) => IconsSolid[icon]);
+const iconListRegular = Object.keys(IconsRegular)
+  .filter((key) => key !== "fas" && key !== "prefix")
+  .map((icon) => IconsRegular[icon]);
+
+library.add(...iconListSolid, ...iconListRegular);
+
+const app = (
+  <Provider store={store}>
+    <BrowserRouter>
+      <Layout />
+    </BrowserRouter>
+  </Provider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+root.render(app);
+
+serviceWorkerRegistration.register();

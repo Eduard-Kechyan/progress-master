@@ -1,0 +1,30 @@
+@import './variables.scss';
+
+@mixin button() {
+    background-color: $sepia_light;
+    border-radius: 10px;
+    color: white;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    padding: 0 10px;
+    font-size: 16px;
+    border: none;
+    transition: 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    span {
+        margin: 0 10px 0 0;
+    }
+    &.icon {
+        span {
+            margin: 0;
+        }
+    }
+    &:hover {
+        background-color: $sepia_dark;
+    }
+    &:active {
+        transform: scale(0.9);
+    }
+}
