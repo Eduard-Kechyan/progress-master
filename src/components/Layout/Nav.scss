@@ -1,0 +1,83 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+nav {
+    position: fixed;
+    top: 0;
+    left: -80%;
+    bottom: 0;
+    z-index: 30;
+    width: 80%;
+    background-color: white;
+    transition: 0.2s;
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 100%;
+        bottom: 0;
+        width: 200%;
+        background-color: rgba(0, 0, 0, 0.3);
+        transition: 0.2s;
+        opacity: 0;
+        visibility: hidden;
+    }
+    .close {
+        @include icon_button;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+        color: white;
+    }
+    &.nav_open {
+        left: 0;
+        .overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.nav_top {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    z-index: 1;
+    img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        object-fit: cover;
+    }
+}
+
+.nav_links {
+    width: 100%;
+    height: calc(100% - 200px);
+    padding: 10px;
+    a {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        display: flex;
+        text-decoration: none;
+        color: $grey_b;
+        font-size: 18px;
+        .icon {
+            @include icon;
+            margin: 0 5px 0 0;
+        }
+        &.active {
+            color: $main_dark;
+            .icon {
+                @include icon;
+                color: $main_dark;
+            }
+        }
+    }
+}

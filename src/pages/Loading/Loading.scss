@@ -1,30 +1,83 @@
-.loading{
+@import "../../variables.scss";
+
+.loading {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    user-select: none;
+    z-index: 1;
 }
-//"homepage": "https://eduard-kechyan.github.io/progress-master",
-/*<script type="text/javascript" > // https://github.com/rafgraph/spa-github-pages
-(function (l) {
-        if (l.search[1]==='/') {
-            var decoded=l.search.slice(1).split('&').map(function (s) {
-                    return s.replace(/~and~/g, '&')
-                }).join('?');
-            window.history.replaceState(null, null,
-                l.pathname.slice(0, -1) + decoded + l.hash);
+
+.loading_background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        object-fit: cover;
+        z-index: 2;
+    }
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
+        background-color: rgba($main_dark, 0.4);
+    }
+}
+
+.loading_title {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 4;
+    h3 {
+        font-size: 52px;
+        color: $blue_b;
+        transform: translate(2px, 2px);
+        font-family: Lobster, serif;
+        line-height: 52px;
+        font-weight: normal;
+        margin: 0;
+        &:nth-child(2) {
+            color: white;
+            position: absolute;
+            top: -2px;
+            left: -4px;
         }
     }
-    (window.location)) </script >*/
+    p {
+        font-size: 16px;
+        color: white;
+        font-family: Lobster, serif;
+        margin: 0;
+        margin-top: 20px;
+        opacity: 0.7;
+    }
+}
 
-    /*
-        <script > if(navigator.serviceWorker) {
-            console.log("%PUBLIC_URL%/serviceWorker.js");
-            navigator.serviceWorker.register("%PUBLIC_URL%/serviceWorker.js") .then(()=> {
-                    console.log("Registered!");
-                }) .catch(error=> {
-                    console.log(error);
-                })
-        }
-        </script >*/
+.loader {
+    position: absolute;
+    left: 50%;
+    bottom: 10%;
+    transform: translate(-50%, 0);
+    z-index: 4;
+}
+
+
+//"homepage": "https://eduard-kechyan.github.io/progress-master",
