@@ -27,4 +27,7 @@ header {
     text-align: center;
     color: $grey_b_light;
     font-size: 20px;
+    &.dashboard{
+        margin-right: 35%;
+    }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +15,26 @@ import CircleChart from '../../components/CircleChart';
 import loadingBg from '../../assets/images/background_2.jpg';
 
 export default function Dashboard(props) {
+  const [time, setTime] = useState(new Date().toLocaleTimeString())
+
   const loading = useSelector((state) => state.main.loading);
   const projects = useSelector((state) => state.main.projects);
   const current = useSelector((state) => state.main.current);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let interval = setInterval(() => {
+      let date = new Date();
+
+      setTime(date.toLocaleTimeString());
+    }, 100);
+
+    return ()=>{
+      clearInterval(interval);
+    }
+  }, [])
+  
 
   const closeUnderBox = (id) => {
     props.closeUnderBox();
@@ -29,18 +44,19 @@ export default function Dashboard(props) {
   return (
     <>
       <Header
+        isDashboard
         loading={loading}
         toggle={props.toggleNav}
         title="Dashboard" />
 
       <div className="layout_container">
         {/* Top */}
-        <div className="dashboard_top" style={{ borderColor: current.accent }}>
+        <div className="dashboard_top">
           <img src={loadingBg} alt="Dashboard Top Background" />
           <div className="overlay" style={{ backgroundColor: current.accent, opacity: 0.3 }} />
 
           {/* Main */}
-          <div className="main">
+          <div className="main" style={{ borderColor: current.accent }}>
             <div style={{ display: 'flex' }}>
               {/* Name */}
               <div className={["name", loading || projects.length <= 1 ? "disabled" : null].join(" ")} tabIndex="0">
@@ -73,6 +89,9 @@ export default function Dashboard(props) {
 
           {/* Secondary */}
           <div className="secondary">
+            {/* Clock */}
+            <span className="clock">{time}</span>
+
             {/* Chart */}
             <CircleChart accent={current.accent} percent={current.percent} />
 

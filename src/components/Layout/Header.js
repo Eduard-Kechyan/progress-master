@@ -25,10 +25,10 @@ export default function Header(props) {
         </span>}
 
       {/* Title */}
-      <h4 className="header_title">{props.title}</h4>
+      <h4 className={["header_title", props.isDashboard ?"dashboard":null].join(" ")}>{props.title}</h4>
 
       {/* Loading */}
-      {props.loading ?
+      {props.loading && !props.isDashboard ?
         <div className="loader small" /> :
         props.hasOptions &&
         <span className="icon" onClick={() => props.optionAction()}>
