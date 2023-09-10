@@ -16,7 +16,7 @@ nav {
         left: 100%;
         bottom: 0;
         width: 200%;
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.4);
         transition: 0.2s;
         opacity: 0;
         visibility: hidden;
@@ -60,6 +60,8 @@ nav {
     width: 100%;
     height: calc(100% - 200px);
     padding: 10px;
+    display: flex;
+    flex-direction: column;
     a {
         width: 100%;
         height: 40px;
@@ -68,16 +70,30 @@ nav {
         text-decoration: none;
         color: $grey_b;
         font-size: 18px;
+        span {
+            opacity: 0.5;
+        }
         .icon {
             @include icon;
             margin: 0 5px 0 0;
         }
+        .single_chart {
+            margin: 5px 5px 0 5px;
+        }
         &.active {
-            color: $main_dark;
+            color: $main_dark ;
+            span {
+                opacity: 1;
+                color: $main_dark !important;
+            }
             .icon {
                 @include icon;
                 color: $main_dark;
             }
+        }
+        &.settings{
+            margin-top: auto;
+            margin-bottom: 50px;
         }
     }
 }

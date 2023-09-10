@@ -1,0 +1,113 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+.under_box {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -30%;
+    height: auto;
+    z-index: 32;
+    transition: 0.2s;
+    background-color: white;
+    user-select: none;
+    .overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.4);
+        transition: 0.2s;
+        opacity: 0;
+        visibility: hidden;
+    }
+    .title {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        font-weight: normal;
+        font-size: 20px;
+        font-family: Lobster, sans-serif;
+        margin: 0;
+        text-align: center;
+        color: $grey;
+    }
+    .content {
+        width: 100%;
+        height: calc(100% - 40px);
+        padding: 10px;
+    }
+    &.under_box_open {
+        bottom: 0;
+        .overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.add_project {
+    .color_selector {
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 0 0 10px 0;
+        p {
+            width: 100%;
+            font-size: 14px;
+            line-height: 20px;
+            color: $grey;
+            margin: 0 0 5px 0;
+            text-align: center;
+        }
+        .color_item {
+            width: 30px;
+            height: 30px;
+            border: 2px solid white;
+            margin: 0 5px 10px 5px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            &.selected {
+                outline: 2px solid $grey;
+            }
+            &:active {
+                transform: scale(0.8);
+            }
+        }
+    }
+    .add_button {
+        @include button;
+        margin: 0 auto;
+        .icon {
+            @include icon;
+            color: white;
+        }
+    }
+}
+
+.project {
+    .option_button {
+        @include button;
+        background-color: white;
+        width: 100%;
+        color: $grey;
+        margin: 0 0 5px 0;
+        .icon {
+            @include icon;
+            margin: 0 10px 0 0;
+        }
+        &.edit {
+            .icon {
+                color: $blue_b;
+            }
+        }
+        &.remove {
+            .icon {
+                color: $red;
+            }
+        }
+    }
+}

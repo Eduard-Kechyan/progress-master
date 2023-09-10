@@ -3,18 +3,24 @@ import { NavLink } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import TuneIcon from '@mui/icons-material/Tune';
+import { useSelector } from 'react-redux';
 import "./Nav.scss";
+
+import CircleChart from '../CircleChart';
 
 import loadingBg from '../../assets/images/loading_background.jpg';
 
 export default function Nav(props) {
+  const loading = useSelector((state) => state.main.loading);
+  const projects = useSelector((state) => state.main.projects);
+
   return (
-    <nav className={props.navOpen ? "nav_open" : null} >
+    <nav className={props.open ? "nav_open" : null} >
       {/* Overlay */}
-      <div className="overlay" onClick={() => props.toggleNav()} />
+      <div className="overlay" onClick={() => props.toggle()} />
 
       {/* Close Nav */}
-      <span className="icon close" onClick={() => props.toggleNav()}>
+      <span className="icon close" onClick={() => props.toggle()}>
         <ArrowForwardIcon sx={{ fontSize: 34 }} />
       </span>
 
@@ -25,14 +31,26 @@ export default function Nav(props) {
 
       {/* Links */}
       <div className="nav_links">
-        <NavLink to="/dashboard" onClick={() => props.toggleNav()}>
+        <NavLink to="/dashboard" onClick={() => props.toggle()}>
           <span className="icon"><DashboardIcon sx={{ fontSize: 34 }} /></span>
           Dashboard
         </NavLink>
-        {/* <NavLink to="/settings" onClick={() => props.toggleNav()}>
+
+        {loading || projects.length === 0 ? null
+          :
+          projects.map(project =>
+            <NavLink
+              key={project.id}
+              to={"/project/" + project.id}
+              onClick={() => props.toggle()}>
+              <CircleChart accent={project.accent} percent={10} size={34} small dark />
+              <span style={{ color: project.accent }}>{project.title}</span>
+            </NavLink>)}
+
+        <NavLink to="/settings" onClick={() => props.toggle()} className="settings">
           <span className="icon"><TuneIcon sx={{ fontSize: 34 }} /></span>
           Settings
-        </NavLink>*/}
+        </NavLink>
       </div>
     </nav>
   )

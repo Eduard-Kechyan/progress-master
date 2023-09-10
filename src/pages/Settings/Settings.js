@@ -1,12 +1,23 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+
+import Header from '../../components/Layout/Header';
 
 export default function Settings(props) {
-    useEffect(() => {
-        props.setPageTitle("Settings");
-    }, [])
-
-
     return (
-        <div>Settings</div>
+        <>
+            <Header
+                goBack
+                hasOptions
+                openNav
+                toggle={props.toggleNav}
+                optionAction={()=>{
+                    console.log("Options opened!");
+                }}
+                title="Settings" />
+
+            <div className="layout_container">
+                Settings
+            </div>
+        </>
     )
 }

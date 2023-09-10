@@ -1,11 +1,11 @@
 @import './variables.scss';
 
 @mixin button() {
-    background-color: $sepia_light;
-    border-radius: 10px;
+    background-color: $grey;
+    border-radius: 4px;
     color: white;
-    height: 30px;
-    line-height: 30px;
+    height: 40px;
+    line-height: 40px;
     display: inline-block;
     padding: 0 10px;
     font-size: 16px;
@@ -13,19 +13,20 @@
     transition: 0.3s;
     cursor: pointer;
     text-decoration: none;
+    display: flex;
     span {
         margin: 0 10px 0 0;
     }
-    &.icon {
-        span {
-            margin: 0;
-        }
-    }
-    &:hover {
-        background-color: $sepia_dark;
+    .icon {
+        margin: 0 -10px 0 auto;
     }
     &:active {
         transform: scale(0.9);
+    }
+    &:disabled{
+        pointer-events: none;
+        background-color: $grey_b !important;
+        opacity: 0.3;
     }
 }
 
@@ -41,6 +42,7 @@
 @mixin icon_button {
     @include icon;
     transition: 0.1s;
+    cursor: pointer;
     &:hover {
         color: white;
         transform: scale(0.8);

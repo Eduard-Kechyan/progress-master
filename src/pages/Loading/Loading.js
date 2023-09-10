@@ -11,6 +11,7 @@ export default function Loading() {
     setTimeout(() => {
       navigate("/dashboard");
     }, 3000);
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -30,7 +31,7 @@ export default function Loading() {
       </div>
 
       {/* Loader */}
-      <div className="loader" />
+      <div className="loader loading_loader" />
     </div>
   )
 }
