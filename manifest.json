@@ -1,18 +1,12 @@
 {
   "short_name": "Progress Master",
   "name": "Progress Master",
-  "start_url": ".",
+  "description": "Progress Master PWA",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#323A45",
-  "orientation": "portrait-primary",
-  "prefer_related_applications": true,
-  "related_applications": [
-    {
-      "platform": "play",
-      "id": "com.google.samples.apps.iosched"
-    }
-  ],
+  "orientation": "portrait",
   "icons": [
     {
       "src": "favicon.ico",
