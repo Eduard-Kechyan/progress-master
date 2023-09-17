@@ -10,6 +10,14 @@ $top_height: 250px;
     right: 0;
     height: $top_height;
     user-select: none;
+    .bg_loader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $blue_b;
+    }
     img {
         position: absolute;
         width: 100%;
@@ -164,8 +172,12 @@ $top_height: 250px;
         padding: 0 10px 5px 5px;
         height: 50px;
         line-height: 50px;
-        margin-bottom: 5px;
-        background-color: white;
+        background-color: transparent;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 0;
+        &:nth-last-child(2){
+            border-bottom: 0;
+        }
         .single_chart {
             margin-top: 10px;
             margin-right: 5px;

@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,7 @@ import CircleChart from '../../components/CircleChart';
 import loadingBg from '../../assets/images/background_2.jpg';
 
 export default function Dashboard(props) {
-  const [time, setTime] = useState(new Date().toLocaleTimeString())
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
 
   const loading = useSelector((state) => state.main.loading);
   const projects = useSelector((state) => state.main.projects);
@@ -27,14 +27,14 @@ export default function Dashboard(props) {
     let interval = setInterval(() => {
       let date = new Date();
 
-      setTime(date.toLocaleTimeString());
+      setTime(date.toLocaleTimeString("en-GB"));
     }, 100);
 
-    return ()=>{
+    return () => {
       clearInterval(interval);
     }
   }, [])
-  
+
 
   const closeUnderBox = (id) => {
     props.closeUnderBox();
@@ -70,11 +70,11 @@ export default function Dashboard(props) {
                       key={project.id}
                       className="project_item"
                       onClick={() => {
-                        const { content, ...filteredProject } = project;
+                        const { tasks, ...filteredProject } = project;
 
-                        DATA.setCurrent(filteredProject);
+                        DATA.setCurrent({ ...filteredProject, total: project.tasks.length});
                       }}>
-                      <CircleChart accent={project.accent} percent={10} size={34} small dark />
+                      <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
                       <span style={{ color: project.accent }}>{project.title}</span>
                     </button>)}
                 </div>
@@ -84,7 +84,7 @@ export default function Dashboard(props) {
             {/* Desc */}
             <p className="desc">{current.title === "" ?
               "No projects found, add one by tapping the plus button below" :
-              current.desc}</p>
+              current.desc === "" ? "No description, add one by going into the project's page's options" : current.desc}</p>
           </div>
 
           {/* Secondary */}

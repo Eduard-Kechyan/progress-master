@@ -43,7 +43,7 @@
     @include icon;
     transition: 0.1s;
     cursor: pointer;
-    &:hover {
+    &:active {
         color: white;
         transform: scale(0.8);
     }

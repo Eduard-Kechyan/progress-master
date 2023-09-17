@@ -8,6 +8,7 @@ import UnderBox from './components/UnderBox/UnderBox';
 import Loading from "./pages/Loading/Loading";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Project from "./pages/Projects/Project";
+import Task from "./pages/Projects/Task";
 import Settings from "./pages/Settings/Settings";
 
 const App = () => {
@@ -20,8 +21,14 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    DATA.getProjects();
-    DATA.getCurrent();
+    let projectsPromise = DATA.getProjects();
+    let tasksPromise = DATA.getTasks();
+    let currentPromise = DATA.getCurrent();
+    Promise.all([projectsPromise, tasksPromise, currentPromise]).then(() => {
+      DATA.mainLoaded();
+    });
+
+    closeUnderBox();
   }, [])
 
   const toggleNav = () => {
@@ -84,10 +91,17 @@ const App = () => {
             closeUnderBox={closeUnderBox}
             toggleNav={toggleNav} />} />
 
+        {/* Task */}
+        <Route exact path="/task/:projectId/:id" element={
+          <Task
+            openUnderBox={openUnderBox}
+            closeUnderBox={closeUnderBox}
+            toggleNav={toggleNav} />} />
+
         {/* Settings */}
         <Route exact path="/settings" element={
-        <Settings
-          toggleNav={toggleNav} />} />
+          <Settings
+            toggleNav={toggleNav} />} />
 
         {/* Not found */}
         <Route path="*" element={<Navigate to="/" replace />} exact />

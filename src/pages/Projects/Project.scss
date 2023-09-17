@@ -1,3 +1,106 @@
 @import '../../variables.scss';
 @import "../../mixins.scss";
 
+.project_desc {
+    font-weight: normal;
+    text-align: center;
+    font-size: 16px;
+    color: $grey;
+    margin: 0 0 20px 0;
+}
+
+.project_circle {
+    width: 30%;
+    margin: 0 auto 20px auto;
+    display: flex;
+    align-items: center;
+    .minus, .plus {
+        @include icon_button;
+        &.disabled{
+            opacity: 0.2;
+            pointer-events: none;
+        }
+    }
+    &.task{
+        width: calc(30% + 80px);
+    }
+}
+
+.project_task_count {
+    color: $grey;
+    text-align: center;
+    margin: 0 0 10px 0;
+    font-weight: normal;
+}
+
+.project_task_item {
+    width: 100%;
+    height: 70px;
+    margin: 0 0 10px 0;
+    display: flex;
+    background-color: $dark;
+    border-radius: 4px;
+    user-select: none;
+    .type, .percent, .options {
+        width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .icon {
+            color: $grey;
+            &.button{@include icon_button;
+            }
+        }
+    }
+    .options {
+        .icon {
+            &:active {
+                color: $red
+            }
+        }
+    }
+    .name {
+        @include button;
+        background-color: transparent;
+        width: calc(100% - 150px);
+        height: 70px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        p {
+            width: 100%;
+            line-height: 25px;
+            margin: 0;
+            &:last-child {
+                color: $grey
+            }
+        }
+        &:active {
+            transform: scale(1)
+        }
+    }
+    &:last-child {
+        margin: 0 0 85px 0;
+    }
+}
+
+.add_task {
+    @include icon_button;
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    right: 20px;
+    bottom: 20px;
+    background-color: $grey;
+    border-radius: 100%;
+    color: white;
+    z-index: 8;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
+    &.quick {
+        width: 40px;
+        height: 40px;
+        right: 85px;
+        bottom: 25px;
+    }
+}

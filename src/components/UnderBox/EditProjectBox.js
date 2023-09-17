@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import AddIcon from '@mui/icons-material/Add';
+import React, { useState, useEffect } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
 import "./UnderBox.scss";
 
 import Input from '../Form/Input';
+import Textarea from '../Form/Textarea';
 
 import DATA from '../../utilities/dataHandler';
 
@@ -18,36 +19,32 @@ const colors = [
     "#20bf6b"
 ];
 
-export default function AddProjectBox(props) {
+export default function EditProjectBox(props) {
     const [newTitle, setNewTitle] = useState("");
+    const [newDesc, setNewDesc] = useState("");
     const [newAccent, setNewAccent] = useState("#f7b731");
 
-    const inputRef = useRef();
-
     useEffect(() => {
-        inputRef.current.focus();
+        setNewTitle(props.title);
+        setNewDesc(props.desc);
+        setNewAccent(props.accent);
         // eslint-disable-next-line
     }, [])
 
-    const handleChange = (property, value) => {
+    const handleTitleChange = (property, value) => {
         setNewTitle(value);
     }
 
-    const addProject = (event) => {
+    const handleDescChange = (property, value) => {
+        setNewDesc(value);
+    }
+
+    const editProject = (event) => {
         event.preventDefault();
 
         if (newTitle !== "") {
-            DATA.addProject(newTitle, newAccent).then((id) => {
-                DATA.setCurrent({
-                    id: id,
-                    title: newTitle,
-                    accent: newAccent,
-                    desc: "",
-                    percent: 0,
-                    completed: 0,
-                    total: 0
-                });
-                props.closeUnderBox(id);
+            DATA.editProject(props.id, { title: newTitle, desc: newDesc, accent: newAccent }).then(() => {
+                props.closeUnderBox();
             }).catch((error) => {
                 if (error === "exists") {
                     alert("A project with that name already exists!");
@@ -57,14 +54,20 @@ export default function AddProjectBox(props) {
     }
 
     return (
-        <form className="add_edit_project" onSubmit={(event) => addProject(event)}>
+        <form className="add_edit_project" onSubmit={event => editProject(event)}>
             {/* Title */}
             <Input
                 name="Title"
                 value={newTitle}
                 property="newTitle"
-                ref={inputRef}
-                handleChange={handleChange} />
+                handleChange={handleTitleChange} />
+
+            {/* Description */}
+            <Textarea
+                name="Description"
+                value={newDesc}
+                property="newDesc"
+                handleChange={handleDescChange} />
 
             {/* Color */}
             <div className="color_selector">
@@ -78,15 +81,15 @@ export default function AddProjectBox(props) {
                 )}
             </div>
 
-            {/* Add */}
+            { }
             <button
                 className="add_edit_button"
                 style={{ backgroundColor: newAccent }}
                 disabled={newTitle === ""}
                 type="submit">
-                Create
+                Edit
                 <span className="icon">
-                    <AddIcon sx={{ fontSize: 24 }} />
+                    <EditIcon sx={{ fontSize: 24 }} />
                 </span>
             </button>
         </form>

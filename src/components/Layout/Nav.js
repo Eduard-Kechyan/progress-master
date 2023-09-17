@@ -43,7 +43,7 @@ export default function Nav(props) {
               key={project.id}
               to={"/project/" + project.id}
               onClick={() => props.toggle()}>
-              <CircleChart accent={project.accent} percent={10} size={34} small dark />
+              <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
               <span style={{ color: project.accent }}>{project.title}</span>
             </NavLink>)}
 

@@ -87,7 +87,7 @@ code {
     transform: translateX(-100%);
     background-color: $grey;
   }
-  &.small{
+  &.small {
     width: 40px;
   }
 }
@@ -110,7 +110,18 @@ code {
   bottom: 0;
   z-index: 10;
   padding: 70px 10px 10px 10px;
-  background-color: $main_dark
+  background-color: $main_dark;
+}
+
+.layout_scroll_box {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  position: relative;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 }
 
 .layout_title {

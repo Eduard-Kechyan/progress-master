@@ -19,6 +19,7 @@
         animation: progress 1s ease-out forwards;
     }
     .chart_percentage {
+        stroke: transparent;
         fill: #667;
         font-family: Roboto, sans-serif;
         font-size: 8px;
@@ -36,13 +37,13 @@
             max-width: 100%;
         }
         .circle_bg {
-            stroke-width: 5;
+            stroke-width: 4;
         }
         .circle {
-            stroke-width: 5;
+            stroke-width: 4;
         }
         .chart_percentage {
-            font-size: 10px;
+            font-size: 9px;
         }
     }
     &.dark {

@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 export default function ProjectBox(props) {
     return (
         <div className="project">
-            <button className="option_button edit" onClick={() => props.edit()}>
+             <button className="option_button edit" onClick={() => props.edit()}>
                 <span className="icon"><EditIcon sx={{ fontSize: 28 }} /></span>
                 Edit
             </button>
