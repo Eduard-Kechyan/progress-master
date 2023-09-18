@@ -21,6 +21,7 @@ body {
   line-height: unset;
   overflow: hidden;
   background-color: transparent;
+  user-select: none;
 }
 
 a {
@@ -125,7 +126,7 @@ code {
 }
 
 .layout_title {
-  user-select: none;
+  
   width: 100%;
   text-align: center;
   font-weight: normal;
@@ -135,7 +136,7 @@ code {
 }
 
 .layout_empty {
-  user-select: none;
+  
   width: 100%;
   text-align: center;
   color: $grey;

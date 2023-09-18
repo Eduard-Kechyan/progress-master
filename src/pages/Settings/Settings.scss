@@ -1,0 +1,40 @@
+@import "../../variables.scss";
+@import "../../mixins.scss";
+
+.settings_block {
+    width: 100%;
+    margin: 0 0 10px 0;
+    border: 2px solid $grey;
+    padding: 10px;
+    border-radius: 4px;
+    
+    .sub_title {
+        text-align: center;
+        font-weight: normal;
+        font-size: 20px;
+        color: $grey;
+        margin: 0 0 10px 0;
+    }
+    .button_box {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 10px 0;
+        p {
+            height: 40px;
+            line-height: 40px;
+            margin: 0;
+            color: $grey_b
+        }
+        &:last-child{
+            margin-bottom: 0;
+        }
+    }
+    button {
+        @include button;
+    }
+}
+
+.setting_import_input{
+    display: none;
+}

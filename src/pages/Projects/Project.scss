@@ -40,7 +40,7 @@
     display: flex;
     background-color: $dark;
     border-radius: 4px;
-    user-select: none;
+    
     .type, .percent, .options {
         width: 50px;
         display: flex;
@@ -79,6 +79,9 @@
         &:active {
             transform: scale(1)
         }
+    }
+    &.holding{
+        background-color: lighten($color: $dark, $amount: 5);
     }
     &:last-child {
         margin: 0 0 85px 0;

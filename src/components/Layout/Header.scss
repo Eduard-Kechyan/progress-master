@@ -10,7 +10,7 @@ header {
     width: 100%;
     height: 60px;
     padding: 10px 15px;
-    user-select: none;
+    
     display: flex;
     .icon {
         @include icon_button;

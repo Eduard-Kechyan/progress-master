@@ -14,7 +14,7 @@ label {
         line-height: 20px;
         color: $grey;
         background-color: white;
-        user-select: none; 
+         
         padding: 0 5px;       
     }
 }
@@ -28,6 +28,7 @@ input,textarea {
     border: 2px solid $grey;
     color: $grey;
     border-radius: 4px;
+    user-select: text;
 }
 
 textarea{

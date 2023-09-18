@@ -10,7 +10,7 @@
     z-index: 32;
     transition: 0.2s;
     background-color: white;
-    user-select: none;
+    
     .overlay {
         position: absolute;
         left: 0;
@@ -49,7 +49,7 @@
 
 .add_edit_project {
     .color_selector {
-        user-select: none;
+        
         display: flex;
         justify-content: center;
         flex-wrap: wrap;

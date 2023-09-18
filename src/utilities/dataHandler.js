@@ -8,7 +8,6 @@ import {
     // Tasks
     addTask,
     editTask,
-    removeTask,
     setTasks,
     setCurrentTasks,
     // Other
@@ -18,114 +17,30 @@ import {
 import store from '../store/store';
 import { v4 as uuid } from "uuid";
 
-/*const round = (value) => {
-    let multiplier = Math.pow(10, 1 || 0);
-    return Math.round(value * multiplier) / multiplier;
-}
-*/
+import UTIL from './utilities';
 
-const editTaskFromTask = (array, currentId, editId, editedItem) => {
-    return array.map(task => {
-        if (task.id === currentId) {
-            if (editId === "") {
-                return {
-                    ...task,
-                    ...editedItem,
-                };
-            } else {
-                let newTask = { ...task };
+const getIdsOfChildrenToRemove = (tasks, newTaskId) => {
+    let foundTasks = [];
 
-                newTask.tasks = newTask.tasks.map(e => {
-                    if (e.id === editId) {
-                        return {
-                            ...e,
-                            ...editedItem,
-                        };
-                    }
-
-                    return e;
+    function findTasks(taskId) {
+        for (let i = 0; i < tasks.length; i++) {
+            if (tasks[i].parentId === taskId) {
+                foundTasks.push({
+                    id: tasks[i].id,
+                    checked: false
                 });
-
-                return newTask;
-            }
-        } else if (task.tasks.length > 0) {
-            return editTaskFromTask(task.tasks, currentId, editId, editedItem);
-        } else {
-            return task;
-        }
-    });
-}
-
-const checkToggledFromTask = (array, currentId, toggleId) => {
-    return array.map(task => {
-        if (task.id === currentId) {
-            let newTask = { ...task };
-            let isCompleted = false;
-
-            newTask.tasks = newTask.tasks.map(e => {
-                isCompleted = !e.completed;
-
-                if (e.id === toggleId) {
-                    return {
-                        ...e,
-                        completed: isCompleted
-                    };
-                }
-
-                return e;
-            });
-
-            newTask.completed = isCompleted ? newTask.completed + 1 : newTask.completed - 1;
-
-            return newTask;
-        } else if (task.tasks.length > 0) {
-            return editTaskFromTask(task.tasks, currentId, toggleId);
-        } else {
-            return task;
-        }
-    });
-}
-
-const updatePercentages = (item) => {
-    if (item.tasks.length > 0) {
-        for (let i = 0; i < item.tasks.length; i++) {
-            if (item.tasks[i].tasks.length > 0) {
-
-            } else if (item.tasks[i].completed) {
-
             }
         }
-    } else {
-        // TODO - Before resetting "completed" and "percent", 
-        // TODO - make sure this was not a single task that is completed, in that case don't reset it
-        return {
-            ...item,
-            completed: 0,
-            percent: 0
-        }
     }
-}
 
-const getIdsOfChildrenToRemove = (tasks, taskId, newIds) => {
-    // TODO - Check if this method works
-    let foundTasks = newIds;
-
-    for (let i = 0; i < tasks.length; i++) {
-        if (tasks[i].parentId === taskId) {
-            console.log(tasks[i].name);
-            foundTasks.push({
-                id: tasks[i].id,
-                checked: false
-            });
-        }
-    }
+    findTasks(newTaskId);
 
     for (let i = 0; i < foundTasks.length; i++) {
+        // eslint-disable-next-line
         if (!foundTasks[i].checked && tasks.some(task => task.parentId === foundTasks[i].id)) {
-            console.log("A");
-
-            let newFoundTasks = foundTasks.map(task => {
-                if (task === foundTasks[i].id) {
+            // eslint-disable-next-line
+            foundTasks = foundTasks.map(task => {
+                if (task.id === foundTasks[i].id) {
                     return {
                         id: task.id,
                         checked: true
@@ -135,12 +50,13 @@ const getIdsOfChildrenToRemove = (tasks, taskId, newIds) => {
                 return task;
             });
 
-            foundTasks = getIdsOfChildrenToRemove(tasks, foundTasks[i].id, newFoundTasks);
+            findTasks(foundTasks[i].id);
         }
     }
 
-    console.log("B");
-    return foundTasks;
+    return foundTasks.map(task => {
+        return task.id
+    });
 }
 
 const DATA = {
@@ -238,12 +154,56 @@ const DATA = {
             });
         });
     },
+    updateProjectData: (projectId) => {
+        /* let project = store.getState().main.projects.find(e => e.id === projectId);
+ 
+         let newProject = updatePercentages(project);
+ 
+         DATA.editProject(projectId, newProject);*/
+
+        // DATA.updateCurrent(projectId, true);
+
+        //task.count
+
+
+
+
+        /*let project = store.getState().main.projects.find(e => e.id === id);
+
+        let completedAmount = 0;
+
+        for (let i = 0; i < project.tasks.length; i++) {
+            if (project.tasks[i].completed) {
+                completedAmount++;
+            }
+        }
+
+        let newProject = {
+            ...project,
+            completed: completedAmount,
+            percent: round(completedAmount === 0 ? 0 : (100 / project.tasks.length) * completedAmount)
+        }
+
+        DATA.editProject(id, newProject);*/
+    },
+    getProjectOrder: (projectId) => {
+        let tasks = store.getState().main.tasks.filter(e => e.id === projectId && e.parentId === projectId).length;
+
+        return tasks;
+    },
+    getProject: (projectId) => {
+        return new Promise((resolve, reject) => {
+            let project = store.getState().main.projects.find(e => e.id === projectId);
+
+            resolve(project);
+        })
+    },
     getProjects: () => {
         return new Promise((resolve, reject) => {
             localForage.getItem('projects').then((value) => {
                 if (value === null) {
                     localForage.setItem('projects', []).then(() => {
-                        resolve();
+                        resolve([]);
                     }).catch((error) => {
                         console.log(error);
 
@@ -252,7 +212,7 @@ const DATA = {
                 } else {
                     store.dispatch(setProjects(value));
 
-                    resolve();
+                    resolve(value);
                 }
             }).catch((error) => {
                 console.log(error);
@@ -260,13 +220,6 @@ const DATA = {
                 reject(error);
             });
         });
-    },
-    getProject: (id) => {
-        return new Promise((resolve, reject) => {
-            let project = store.getState().main.projects.find(e => e.id === id);
-
-            resolve(project);
-        })
     },
     // Task
     addTask: (projectId, currentId, name, desc) => {
@@ -279,6 +232,8 @@ const DATA = {
                 id: uuid(),
                 name: name,
                 desc: desc,
+                order: DATA.getProjectOrder(projectId),
+                count: 0,
                 percent: 0,
                 completed: 0
             }
@@ -290,7 +245,7 @@ const DATA = {
 
                 resolve();
 
-                DATA.updateCurrent(projectId, true);
+                DATA.updateProjectData(projectId);
             }).catch((error) => {
                 store.dispatch(setLoading(false));
                 console.log(error);
@@ -321,28 +276,27 @@ const DATA = {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
-            let idsOfChildrenToRemove = getIdsOfChildrenToRemove(store.getState().main.tasks, taskId, []);
+            let idsOfChildrenToRemove = getIdsOfChildrenToRemove(store.getState().main.tasks, taskId);
 
-            console.log(idsOfChildrenToRemove);
+            idsOfChildrenToRemove.push(taskId);
 
-            store.dispatch(setLoading(false));
+            let tasks = store.getState().main.tasks.filter((el) => !idsOfChildrenToRemove.includes(el.id));
 
-            /* store.dispatch(removeTask(taskId));
- 
-             localForage.setItem('tasks', store.getState().main.tasks).then(() => {
-                 store.dispatch(setLoading(false));
- 
-                 DATA.updateCurrent(projectId, true);
-                 DATA.updatePercent(projectId);
- 
-                 resolve();
-             }).catch((error) => {
-                 store.dispatch(setLoading(false));
- 
-                 console.log(error);
- 
-                 reject(error);
-             });*/
+            store.dispatch(setTasks(tasks));
+
+            localForage.setItem('tasks', store.getState().main.tasks).then(() => {
+                store.dispatch(setLoading(false));
+
+                DATA.updateProjectData(projectId);
+
+                resolve();
+            }).catch((error) => {
+                store.dispatch(setLoading(false));
+
+                console.log(error);
+
+                reject(error);
+            });
         });
     },
     removeProjectTasks: (projectId) => {
@@ -354,12 +308,31 @@ const DATA = {
             console.log(error);
         });
     },
+    toggleTask: (projectId, taskId) => {
+        let task = store.getState().main.tasks.find(e => e.id === taskId);
+
+        let newTasks = {
+            ...task,
+            completed: !task.completed
+        };
+
+        DATA.editTask(taskId, newTasks);
+
+        DATA.updateProjectData(projectId);
+    },
+    getTask: (taskId) => {
+        return new Promise((resolve, reject) => {
+            let task = store.getState().main.tasks.find(e => e.id === taskId);
+
+            resolve(task);
+        })
+    },
     getTasks: () => {
         return new Promise((resolve, reject) => {
             localForage.getItem("tasks").then((value) => {
                 if (value === null) {
                     localForage.setItem("tasks", []).then(() => {
-                        resolve();
+                        resolve([]);
                     }).catch((error) => {
                         console.log(error);
 
@@ -368,7 +341,7 @@ const DATA = {
                 } else {
                     store.dispatch(setTasks(value));
 
-                    resolve();
+                    resolve(value);
                 }
             }).catch((error) => {
                 console.log(error);
@@ -385,72 +358,6 @@ const DATA = {
 
             resolve();
         })
-    },
-    getTask: (taskId) => {
-        return new Promise((resolve, reject) => {
-            let task = store.getState().main.tasks.find(e => e.id === taskId);
-
-            resolve(task);
-        })
-    },
-    toggleTask: (projectId, currentId, toggleId) => {
-        return new Promise((resolve, reject) => {
-            let project = store.getState().main.projects.find(e => e.id === projectId);
-
-            let newTasks = [];
-
-            if (currentId === "") {
-                let isCompleted = false;
-
-                newTasks = project.tasks.map(task => {
-                    if (task.id === toggleId) {
-                        isCompleted = !task.completed;
-
-                        return {
-                            ...task,
-                            completed: isCompleted
-                        };
-                    }
-
-                    return task;
-                });
-
-                DATA.editProject(projectId, {
-                    tasks: newTasks,
-                    completed: isCompleted ? project.completed + 1 : project.completed - 1
-                });
-            } else {
-                newTasks = checkToggledFromTask(project.tasks, currentId, toggleId);
-
-                DATA.editProject(projectId, { tasks: newTasks });
-            }
-
-            DATA.updatePercentages(projectId);
-        });
-    },
-    // Other
-    updatePercentages: (projectId) => {
-        let project = store.getState().main.projects.find(e => e.id === projectId);
-
-        let newProject = updatePercentages(project);
-
-        DATA.editProject(projectId, newProject);
-    },
-    setTaskPercent: (projectId, id, newPercent) => {
-        return new Promise((resolve, reject) => {
-            // let project = store.getState().main.projects.find(e => e.id === projectId);
-            //let task = project.tasks.find(e => e.id === id);
-
-            /* let newTask = {
-                 ...task,
-                 percent: newPercent,
-                 completed: 0
-             }*/
-
-            //    store.dispatch(editTask({ projectId: projectId, id: id, newTask: newTask }));
-
-            DATA.updatePercent(projectId);
-        });
     },
     // Current
     setCurrent: (current) => {
@@ -473,7 +380,7 @@ const DATA = {
             });
         });
     },
-    updateCurrent: (id, alt) => {
+    updateCurrent: (id, alt, total) => {
         if (alt) {
             let project = store.getState().main.projects.find(e => e.id === id);
 
@@ -481,58 +388,88 @@ const DATA = {
                 ...project
             });
 
-            /* DATA.setCurrent({
-                 ...project,
-                 total: project.tasks.length
-             });*/
+            DATA.setCurrent({
+                ...project,
+                total: total
+            });
         } else {
-            if (id === store.getState().main.current.id) {
-                if (store.getState().main.projects.length > 0) {
-                    let project = store.getState().main.projects[0];
+            if (id === store.getState().main.current.id && store.getState().main.projects.length > 0) {
+                let project = store.getState().main.projects[0];
 
-                    const { tasks, ...filteredProject } = project;
+                const { tasks, ...filteredProject } = project;
 
-                    DATA.setCurrent({
-                        ...filteredProject,
-                        total: project.tasks.length
-                    });
-                } else {
-                    DATA.setCurrent({
-                        id: "",
-                        title: "",
-                        accent: "",
-                        desc: "",
-                        percent: 0,
-                        completed: 0,
-                        total: 0,
-                    });
-                }
+                DATA.setCurrent({
+                    ...filteredProject,
+                    total: total
+                });
+            } else {
+                DATA.setCurrent({
+                    id: "",
+                    title: "",
+                    accent: "",
+                    desc: "",
+                    percent: 0,
+                    completed: 0,
+                    total: 0,
+                });
             }
         }
+    },
+    // Settings
+    importProjects: (importData) => {
+        return new Promise((resolve, reject) => {
+            store.dispatch(setProjects(importData));
+
+            localForage.setItem('projects', store.getState().main.projects).then(() => {
+                resolve();
+            }).catch((error) => {
+                console.log(error);
+
+                reject(error);
+            });
+        })
+    },
+    importTasks: (importData) => {
+        return new Promise((resolve, reject) => {
+            store.dispatch(setTasks(importData));
+
+            localForage.setItem('tasks', store.getState().main.tasks).then(() => {
+                resolve();
+            }).catch((error) => {
+                console.log(error);
+
+                reject(error);
+            });
+        })
+    },
+    clearData: () => {
+        return new Promise((resolve, reject) => {
+            localForage.clear().then(() => {
+                DATA.getProjects();
+                DATA.getTasks();
+                DATA.updateCurrent("", false);
+
+                resolve();
+            }).catch((error) => {
+                console.log(error);
+
+                reject();
+            });
+        })
     },
     // Other
-    updatePercent: (id) => {
-        /*let project = store.getState().main.projects.find(e => e.id === id);
-
-        let completedAmount = 0;
-
-        for (let i = 0; i < project.tasks.length; i++) {
-            if (project.tasks[i].completed) {
-                completedAmount++;
-            }
-        }
-
-        let newProject = {
-            ...project,
-            completed: completedAmount,
-            percent: round(completedAmount === 0 ? 0 : (100 / project.tasks.length) * completedAmount)
-        }
-
-        DATA.editProject(id, newProject);*/
-    },
     mainLoaded: () => {
         store.dispatch(setLoading(false));
-    }
+    },
+    toggleLoading: (value) => {
+        if (value === undefined || value === null) {
+            let loading = store.getState().main.loading;
+
+            store.dispatch(setLoading(!loading));
+        } else {
+            store.dispatch(setLoading(value));
+        }
+    },
 };
 
 export default DATA;
