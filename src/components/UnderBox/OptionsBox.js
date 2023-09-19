@@ -3,7 +3,7 @@ import "./UnderBox.scss";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function ProjectBox(props) {
+export default function OptionsBox(props) {
     return (
         <div className="project">
              <button className="option_button edit" onClick={() => props.edit()}>

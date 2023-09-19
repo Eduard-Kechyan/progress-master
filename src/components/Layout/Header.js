@@ -24,8 +24,8 @@ export default function Header(props) {
           <MenuIcon sx={{ fontSize: 34 }} />
         </span>}
 
-      {/* Title */}
-      <h4 className={["header_title", props.isDashboard ?"dashboard":null].join(" ")}>{props.title}</h4>
+      {/* Name */}
+      <h4 className={["header_name", props.isDashboard ?"dashboard":null].join(" ")}>{props.name}</h4>
 
       {/* Loading */}
       {props.loading && !props.isDashboard ?

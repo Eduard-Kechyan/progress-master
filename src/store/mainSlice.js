@@ -9,7 +9,7 @@ export const mainSlice = createSlice({
         currentTasks: [],
         current: {
             id: "",
-            title: "",
+            name: "",
             accent: "",
             desc: "",
             percent: 0,
@@ -38,7 +38,7 @@ export const mainSlice = createSlice({
         setProjects: (state, action) => {
             state.projects = action.payload;
         },
-
+        
         // Tasks
         addTask: (state, action) => {
             state.tasks.push(action.payload);

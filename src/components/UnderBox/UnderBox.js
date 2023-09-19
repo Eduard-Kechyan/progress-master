@@ -7,7 +7,7 @@ export default function UnderBox(props) {
             {/* Overlay */}
             <div className="overlay" onClick={() => props.closeUnderBox()} />
 
-            <h4 className="title">{props.title === "" ? "Loading..." : props.title}</h4>
+            <h4 className="name">{props.name === "" ? "Loading..." : props.name}</h4>
 
             <div className="content">
                 {props.content}

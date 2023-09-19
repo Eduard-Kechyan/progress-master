@@ -3,7 +3,7 @@ import React from 'react'
 export default function Textarea(props) {
     return (
         <label>
-            <span className="name">{props.name}</span>
+            <span className="input_name">{props.name}</span>
 
             <textarea
                 type="text"

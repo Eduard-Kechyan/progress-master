@@ -41,10 +41,11 @@ export default function Nav(props) {
           projects.map(project =>
             <NavLink
               key={project.id}
-              to={"/project/" + project.id}
+              to={"/task/" + project.id}
+              state={{ projectId: project.id, taskId: "", isProject: true }}
               onClick={() => props.toggle()}>
               <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
-              <span style={{ color: project.accent }}>{project.title}</span>
+              <span style={{ color: project.accent }}>{project.name}</span>
             </NavLink>)}
 
         <NavLink to="/settings" onClick={() => props.toggle()} className="settings">

@@ -22,8 +22,8 @@ export default function Loading() {
         <div className="overlay" />
       </div>
 
-      {/* Title */}
-      <div className="loading_title">
+      {/* Name */}
+      <div className="loading_name">
         <h3>Progress Master</h3>
         <h3>Progress Master</h3>
 

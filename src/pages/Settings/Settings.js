@@ -94,12 +94,12 @@ export default function Settings(props) {
                 optionAction={() => {
                     console.log("Options opened!");
                 }}
-                title="Settings" />
+                name="Settings" />
 
             <div className="layout_container">
                 <div className="layout_scroll_box">
                     <div className="settings_block">
-                        <h3 className="sub_title">Data</h3>
+                        <h3 className="sub_name">Data</h3>
 
                         <div className="button_box">
                             <p>Export all data</p>

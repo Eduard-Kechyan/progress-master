@@ -72,6 +72,11 @@ const UTIL = {
     round: (value) => {
         let multiplier = Math.pow(10, 1 || 0);
         return Math.round(value * multiplier) / multiplier;
+    },
+    sortByOrder: (tasks) => {
+        let newTasks =[...tasks];
+
+        return newTasks.sort((a, b) => a.order - b.order);
     }
 };
 

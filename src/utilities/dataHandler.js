@@ -61,11 +61,11 @@ const getIdsOfChildrenToRemove = (tasks, newTaskId) => {
 
 const DATA = {
     // Project
-    addProject: (title, accent) => {
+    addProject: (name, accent) => {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
-            if (store.getState().main.projects.some(e => e.title === title)) {
+            if (store.getState().main.projects.some(e => e.name === name)) {
                 reject("exists");
                 store.dispatch(setLoading(false));
                 return;
@@ -73,7 +73,7 @@ const DATA = {
 
             let newProjectData = {
                 id: uuid(),
-                title: title,
+                name: name,
                 percent: 0,
                 completed: 0,
                 desc: "",
@@ -97,7 +97,7 @@ const DATA = {
             store.dispatch(setLoading(true));
 
             if (store.getState().main.projects.some(e => {
-                if (e.title === newProject.title && e.id !== id) {
+                if (e.name === newProject.name && e.id !== id) {
                     return e;
                 }
 
@@ -155,6 +155,14 @@ const DATA = {
         });
     },
     updateProjectData: (projectId) => {
+        let project = store.getState().main.projects.find(e => e.id === projectId);
+        let tasks = store.getState().main.tasks.find(e => e.projectId === projectId);
+
+
+
+
+
+
         /* let project = store.getState().main.projects.find(e => e.id === projectId);
  
          let newProject = updatePercentages(project);
@@ -186,8 +194,8 @@ const DATA = {
 
         DATA.editProject(id, newProject);*/
     },
-    getProjectOrder: (projectId) => {
-        let tasks = store.getState().main.tasks.filter(e => e.id === projectId && e.parentId === projectId).length;
+    getProjectOrder: (projectId, currentId) => {
+        let tasks = store.getState().main.tasks.filter(e => e.projectId === projectId && e.parentId === currentId).length;
 
         return tasks;
     },
@@ -221,6 +229,7 @@ const DATA = {
             });
         });
     },
+
     // Task
     addTask: (projectId, currentId, name, desc) => {
         return new Promise((resolve, reject) => {
@@ -232,7 +241,7 @@ const DATA = {
                 id: uuid(),
                 name: name,
                 desc: desc,
-                order: DATA.getProjectOrder(projectId),
+                order: DATA.getProjectOrder(projectId, currentId),
                 count: 0,
                 percent: 0,
                 completed: 0
@@ -287,6 +296,8 @@ const DATA = {
             localForage.setItem('tasks', store.getState().main.tasks).then(() => {
                 store.dispatch(setLoading(false));
 
+                DATA.setTasksOrder(projectId);
+
                 DATA.updateProjectData(projectId);
 
                 resolve();
@@ -320,6 +331,42 @@ const DATA = {
 
         DATA.updateProjectData(projectId);
     },
+    setTasksOrder: (projectId) => {
+        let chosenTasks = store.getState().main.tasks.filter(e => e.projectId === projectId);
+        let otherTasks = store.getState().main.tasks.filter(e => e.projectId !== projectId);
+
+        let newChosenTasks = UTIL.sortByOrder(chosenTasks);
+
+        for (let i = 0; i < newChosenTasks.length; i++) {
+            otherTasks.push({
+                ...newChosenTasks[i],
+                order: i
+            });
+        }
+
+        store.dispatch(setTasks(otherTasks));
+
+        localForage.setItem("tasks", store.getState().main.tasks).catch((error) => {
+            console.log(error);
+        });
+    },
+    orderTasks: (currentId, newTasks) => {
+        let otherTasks = store.getState().main.tasks.filter(e => e.parentId !== currentId);
+
+        for (let i = 0; i < newTasks.length; i++) {
+            otherTasks.push(newTasks[i]);    
+        }
+
+        store.dispatch(setTasks(otherTasks));
+
+        store.dispatch(setCurrentTasks(newTasks));
+
+        localForage.setItem("tasks", store.getState().main.tasks).then(value => {
+            store.dispatch(setTasks(value));
+        }).catch((error) => {
+            console.log(error);
+        });
+    },
     getTask: (taskId) => {
         return new Promise((resolve, reject) => {
             let task = store.getState().main.tasks.find(e => e.id === taskId);
@@ -350,15 +397,16 @@ const DATA = {
             });
         });
     },
-    setTasks: (projectId) => {
+    setTasks: (currentId) => {
         return new Promise((resolve, reject) => {
-            let tasks = store.getState().main.tasks.filter(e => e.parentId === projectId);
+            let tasks = UTIL.sortByOrder(store.getState().main.tasks.filter(e => e.parentId === currentId));
 
             store.dispatch(setCurrentTasks(tasks));
 
             resolve();
         })
     },
+
     // Current
     setCurrent: (current) => {
         localForage.setItem('current', current).then(() => {
@@ -405,7 +453,7 @@ const DATA = {
             } else {
                 DATA.setCurrent({
                     id: "",
-                    title: "",
+                    name: "",
                     accent: "",
                     desc: "",
                     percent: 0,
@@ -415,6 +463,7 @@ const DATA = {
             }
         }
     },
+
     // Settings
     importProjects: (importData) => {
         return new Promise((resolve, reject) => {
@@ -457,6 +506,7 @@ const DATA = {
             });
         })
     },
+    
     // Other
     mainLoaded: () => {
         store.dispatch(setLoading(false));

@@ -8,7 +8,7 @@ import "./Dashboard.scss";
 import DATA from '../../utilities/dataHandler';
 
 import Header from '../../components/Layout/Header';
-import AddProjectBox from '../../components/UnderBox/AddProjectBox';
+import AddBox from '../../components/UnderBox/AddBox';
 
 import CircleChart from '../../components/CircleChart';
 
@@ -38,7 +38,7 @@ export default function Dashboard(props) {
 
   const closeUnderBox = (id) => {
     props.closeUnderBox();
-    navigate("/project/" + id);
+    navigate("/task/" + id, { state: { projectId: id, taskId:"", isProject: true } });
   }
 
   return (
@@ -47,7 +47,7 @@ export default function Dashboard(props) {
         isDashboard
         loading={loading}
         toggle={props.toggleNav}
-        title="Dashboard" />
+        name="Dashboard" />
 
       <div className="layout_container">
         {/* Top */}
@@ -60,7 +60,7 @@ export default function Dashboard(props) {
             <div style={{ display: 'flex' }}>
               {/* Name */}
               <div className={["name", loading || projects.length <= 1 ? "disabled" : null].join(" ")} tabIndex="0">
-                <span>{current.title}</span>
+                <span>{current.name}</span>
                 <span className="icon"><KeyboardArrowDownIcon sx={{ fontSize: 34 }} /></span>
 
                 {/* Drop Down */}
@@ -72,17 +72,17 @@ export default function Dashboard(props) {
                       onClick={() => {
                         const { tasks, ...filteredProject } = project;
 
-                        DATA.setCurrent({ ...filteredProject, total: project.tasks.length});
+                        DATA.setCurrent(filteredProject);
                       }}>
                       <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
-                      <span style={{ color: project.accent }}>{project.title}</span>
+                      <span style={{ color: project.accent }}>{project.name}</span>
                     </button>)}
                 </div>
               </div>
             </div>
 
             {/* Desc */}
-            <p className="desc">{current.title === "" ?
+            <p className="desc">{current.name === "" ?
               "No projects found, add one by tapping the plus button below" :
               current.desc === "" ? "No description, add one by going into the project's page's options" : current.desc}</p>
           </div>
@@ -105,12 +105,12 @@ export default function Dashboard(props) {
           {
             loading ?
               <>
-                < h2 className="layout_title" > Projects: [?]</h2 >
+                < h2 className="layout_name" > Projects: [?]</h2 >
                 <div className="loader" />
               </>
               :
               <>
-                <h2 className="layout_title">Projects: [{projects.length}]</h2>
+                <h2 className="layout_name">Projects: [{projects.length}]</h2>
                 {projects.length === 0 ?
                   <p className="layout_empty">No projects found, add one by tapping the plus button below</p>
                   :
@@ -118,9 +118,9 @@ export default function Dashboard(props) {
                     <button
                       key={project.id}
                       className="project_item"
-                      onClick={() => navigate("/project/" + project.id)}>
+                      onClick={() => navigate("/task/"+project.id, { state: { projectId: project.id, taskId: "", isProject: true } })}>
                       <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
-                      <span style={{ color: project.accent }}>{project.title}</span>
+                      <span style={{ color: project.accent }}>{project.name}</span>
                     </button>)}
               </>
           }
@@ -128,7 +128,7 @@ export default function Dashboard(props) {
           {/* Add */}
           <span className="icon add_project" onClick={() => props.openUnderBox(
             "Create a new Project",
-            <AddProjectBox closeUnderBox={closeUnderBox} />
+            <AddBox closeUnderBox={closeUnderBox} isProject={true} />
           )}>
             <AddIcon sx={{ fontSize: 40 }} />
           </span>

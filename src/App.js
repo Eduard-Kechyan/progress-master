@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useTransition, a } from '@react-spring/web'
+
 import DATA from './utilities/dataHandler';
 
+// Layout
 import Nav from './components/Layout/Nav';
 import UnderBox from './components/UnderBox/UnderBox';
 
+// Pages
 import Loading from "./pages/Loading/Loading";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import Project from "./pages/Projects/Project";
-import Task from "./pages/Projects/Task";
+import Task from "./pages/Task/Task";
 import Settings from "./pages/Settings/Settings";
 
 const App = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [underBoxOpen, setUnderBoxOpen] = useState(false);
-  const [underBoxTitle, setUnderBoxTitle] = useState("");
+  const [underBoxName, setUnderBoxName] = useState("");
   const [underBoxContent, setUnderBoxContent] = useState(null);
   const [underBoxTimeout, setUnderBoxTimeout] = useState(false);
 
   const location = useLocation();
+
+  const transitions = useTransition(location, {
+    config:{ duration: 300 },
+    from: {
+      transform: 'translate3d(100%,0,0)'
+    },
+    enter: {
+      transform: 'translate3d(0%,0,0)'
+    },
+    leave: {
+      transform: 'translate3d(-50%,0,0)'
+    },
+  })
 
   useEffect(() => {
     let projectsPromise = DATA.getProjects();
@@ -35,8 +51,8 @@ const App = () => {
     setNavOpen(!navOpen);
   }
 
-  const openUnderBox = (title, content) => {
-    setUnderBoxTitle(title);
+  const openUnderBox = (name, content) => {
+    setUnderBoxName(name);
     setUnderBoxContent(content);
     setUnderBoxOpen(true);
 
@@ -48,7 +64,7 @@ const App = () => {
     setUnderBoxOpen(false);
 
     setUnderBoxTimeout(setTimeout(() => {
-      setUnderBoxTitle("");
+      setUnderBoxName("");
       setUnderBoxContent("");
     }, 200));
   }
@@ -68,44 +84,41 @@ const App = () => {
 
         <UnderBox
           open={underBoxOpen}
-          title={underBoxTitle}
+          name={underBoxName}
           content={underBoxContent}
           closeUnderBox={closeUnderBox} />
       </>}
 
-      <Routes>
-        {/* Loading */}
-        <Route exact path="/" element={<Loading />} />
+      {transitions((styles, item) => (
+        <a.div style={styles} className="layout_wrapper">
+          <Routes location={item}>
+            {/* Loading */}
+            <Route exact path="/" element={<Loading />} />
 
-        {/* Dashboard */}
-        <Route exact path="/dashboard" element={
-          <Dashboard
-            openUnderBox={openUnderBox}
-            closeUnderBox={closeUnderBox}
-            toggleNav={toggleNav} />} />
+            {/* Dashboard */}
+            <Route exact path="/dashboard" element={
+              <Dashboard
+                openUnderBox={openUnderBox}
+                closeUnderBox={closeUnderBox}
+                toggleNav={toggleNav} />} />
 
-        {/* Project */}
-        <Route exact path="/project/:id" element={
-          <Project
-            openUnderBox={openUnderBox}
-            closeUnderBox={closeUnderBox}
-            toggleNav={toggleNav} />} />
+            {/* Task */}
+            <Route exact path="/task/:projectId" element={
+              <Task
+                openUnderBox={openUnderBox}
+                closeUnderBox={closeUnderBox}
+                toggleNav={toggleNav} />} />
 
-        {/* Task */}
-        <Route exact path="/task/:projectId/:id" element={
-          <Task
-            openUnderBox={openUnderBox}
-            closeUnderBox={closeUnderBox}
-            toggleNav={toggleNav} />} />
+            {/* Settings */}
+            <Route exact path="/settings" element={
+              <Settings
+                toggleNav={toggleNav} />} />
 
-        {/* Settings */}
-        <Route exact path="/settings" element={
-          <Settings
-            toggleNav={toggleNav} />} />
-
-        {/* Not found */}
-        <Route path="*" element={<Navigate to="/" replace />} exact />
-      </Routes>
+            {/* Not found */}
+            <Route path="*" element={<Navigate to="/" replace />} exact />
+          </Routes>
+        </a.div>
+      ))}
     </>
   );
 };

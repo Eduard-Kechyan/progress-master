@@ -19,48 +19,54 @@ const colors = [
     "#20bf6b"
 ];
 
-export default function EditProjectBox(props) {
-    const [newTitle, setNewTitle] = useState("");
+export default function EditBox(props) {
+    const [newName, setNewName] = useState("");
     const [newDesc, setNewDesc] = useState("");
     const [newAccent, setNewAccent] = useState("#f7b731");
 
     useEffect(() => {
-        setNewTitle(props.title);
+        setNewName(props.name);
         setNewDesc(props.desc);
         setNewAccent(props.accent);
         // eslint-disable-next-line
     }, [])
 
-    const handleTitleChange = (property, value) => {
-        setNewTitle(value);
+    const handleNameChange = (property, value) => {
+        setNewName(value);
     }
 
     const handleDescChange = (property, value) => {
         setNewDesc(value);
     }
 
-    const editProject = (event) => {
+    const edit = (event) => {
         event.preventDefault();
 
-        if (newTitle !== "") {
-            DATA.editProject(props.id, { title: newTitle, desc: newDesc, accent: newAccent }).then(() => {
-                props.closeUnderBox();
-            }).catch((error) => {
-                if (error === "exists") {
-                    alert("A project with that name already exists!");
-                }
-            });
+        if (newName !== "") {
+            if (props.isProject) {
+                DATA.editProject(props.id, { name: newName, desc: newDesc, accent: newAccent }).then(() => {
+                    props.closeUnderBox();
+                }).catch((error) => {
+                    if (error === "exists") {
+                        alert("A project with that name already exists!");
+                    }
+                });
+            } else {
+                DATA.editTask(props.id, { name: newName, desc: newDesc }).then(() => {
+                    props.closeUnderBox();
+                })
+            }
         }
     }
 
     return (
-        <form className="add_edit_project" onSubmit={event => editProject(event)}>
-            {/* Title */}
+        <form className="add_edit_box" onSubmit={event => edit(event)}>
+            {/* Name */}
             <Input
-                name="Title"
-                value={newTitle}
-                property="newTitle"
-                handleChange={handleTitleChange} />
+                name="Name"
+                value={newName}
+                property="newName"
+                handleChange={handleNameChange} />
 
             {/* Description */}
             <Textarea
@@ -70,7 +76,7 @@ export default function EditProjectBox(props) {
                 handleChange={handleDescChange} />
 
             {/* Color */}
-            <div className="color_selector">
+            {props.isProject && <div className="color_selector">
                 <p>Accent Color:</p>
                 {colors.map(color =>
                     <span
@@ -79,13 +85,13 @@ export default function EditProjectBox(props) {
                         className={["color_item", newAccent === color ? "selected" : null].join(" ")}
                         onClick={() => setNewAccent(color)} />
                 )}
-            </div>
+            </div>}
 
-            { }
+            {/* Edit */}
             <button
                 className="add_edit_button"
-                style={{ backgroundColor: newAccent }}
-                disabled={newTitle === ""}
+                style={{ backgroundColor: props.isProject ? newAccent : props.accent }}
+                disabled={newName === ""}
                 type="submit">
                 Edit
                 <span className="icon">
