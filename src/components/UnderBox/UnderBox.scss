@@ -10,7 +10,6 @@
     z-index: 32;
     transition: 0.2s;
     background-color: white;
-    
     .overlay {
         position: absolute;
         left: 0;
@@ -18,6 +17,7 @@
         bottom: 100%;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
         transition: 0.2s;
         opacity: 0;
         visibility: hidden;

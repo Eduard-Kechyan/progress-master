@@ -76,6 +76,7 @@ const DATA = {
                 name: name,
                 percent: 0,
                 completed: 0,
+                children: [],
                 desc: "",
                 accent: accent
             }
@@ -92,12 +93,12 @@ const DATA = {
             });
         });
     },
-    editProject: (id, newProject) => {
+    editProject: (projectId, newProject) => {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
             if (store.getState().main.projects.some(e => {
-                if (e.name === newProject.name && e.id !== id) {
+                if (e.name === newProject.name && e.id !== projectId) {
                     return e;
                 }
 
@@ -108,7 +109,7 @@ const DATA = {
                 return;
             }
 
-            let project = store.getState().main.projects.find(e => e.id === id);
+            let project = store.getState().main.projects.find(e => e.id === projectId);
 
             let newProjectData = {
                 ...project,
@@ -133,18 +134,18 @@ const DATA = {
             });
         });
     },
-    removeProject: (id) => {
+    removeProject: (projectId) => {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
-            store.dispatch(removeProject(id));
+            store.dispatch(removeProject(projectId));
 
             localForage.setItem('projects', store.getState().main.projects).then(() => {
                 store.dispatch(setLoading(false));
 
-                DATA.updateCurrent(id);
+                DATA.updateCurrent(projectId);
 
-                DATA.removeProjectTasks(id);
+                DATA.removeProjectTasks(projectId);
 
                 resolve();
             }).catch((error) => {
@@ -155,12 +156,18 @@ const DATA = {
         });
     },
     updateProjectData: (projectId) => {
-        let project = store.getState().main.projects.find(e => e.id === projectId);
-        let tasks = store.getState().main.tasks.find(e => e.projectId === projectId);
+        //  let project = store.getState().main.projects.find(e => e.id === projectId);
+        // let tasks = store.getState().main.tasks.find(e => e.projectId === projectId);
 
 
 
-//
+
+
+
+
+
+
+
 
 
         /* let project = store.getState().main.projects.find(e => e.id === projectId);
@@ -231,7 +238,7 @@ const DATA = {
     },
 
     // Task
-    addTask: (projectId, currentId, name, desc) => {
+    addTask: (projectId, currentId, name, desc, isProject) => {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
@@ -242,9 +249,19 @@ const DATA = {
                 name: name,
                 desc: desc,
                 order: DATA.getProjectOrder(projectId, currentId),
-                count: 0,
+                children: [],
                 percent: 0,
                 completed: 0
+            }
+
+            if (isProject) {
+                let project = store.getState().main.projects.find(e => e.id === projectId);
+
+                DATA.editProject(projectId, { children: [...project.children, newTaskData.id] });
+            } else {
+                let task = store.getState().main.tasks.find(e => e.id === currentId);
+
+                DATA.editTask(currentId, { children: [...task.children, newTaskData.id] });
             }
 
             store.dispatch(addTask(newTaskData));
@@ -263,12 +280,15 @@ const DATA = {
         });
     },
     editTask: (taskId, editedTask) => {
+        // TODO - This function doesn't remove the removed task id from it's parent's children array
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
             let task = store.getState().main.tasks.find(e => e.id === taskId);
 
-            store.dispatch(editTask({ ...task, ...editedTask }));
+            let newTask = { ...task, ...editedTask };
+
+            store.dispatch(editTask(newTask));
 
             localForage.setItem('tasks', store.getState().main.tasks).then(() => {
                 store.dispatch(setLoading(false));
@@ -281,7 +301,7 @@ const DATA = {
             });
         });
     },
-    removeTask: (projectId, taskId) => {
+    removeTask: (projectId, currentId, taskId, isProject) => {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
@@ -290,6 +310,20 @@ const DATA = {
             idsOfChildrenToRemove.push(taskId);
 
             let tasks = store.getState().main.tasks.filter((el) => !idsOfChildrenToRemove.includes(el.id));
+
+            if (isProject) {
+                let project = store.getState().main.projects.find(e => e.id === projectId);
+
+                let newChildren = project.children.filter(task => task !== taskId);
+
+                DATA.editProject(projectId, { children: newChildren });
+            } else {
+                let task = store.getState().main.tasks.find(e => e.id === currentId);
+
+                let newChildren = task.children.filter(task => task !== taskId);
+
+                DATA.editTask(currentId, { children: newChildren });
+            }
 
             store.dispatch(setTasks(tasks));
 
@@ -320,11 +354,27 @@ const DATA = {
         });
     },
     toggleTask: (projectId, taskId) => {
-        let task = store.getState().main.tasks.find(e => e.id === taskId);
+        let task = store.getState().main.currentTasks.find(e => e.id === taskId);
 
         let newTasks = {
             ...task,
-            completed: !task.completed
+            completed: !task.completed,
+            percent: task.completed ? 0 : 100
+        };
+
+        DATA.editTask(taskId, newTasks);
+
+        DATA.updateProjectData(projectId);
+    },
+    setTaskPercent: (projectId, taskId, newPercent) => {
+        let task = store.getState().main.tasks.find(e => e.id === taskId);
+
+        let roundedPercent = Math.floor(newPercent);
+
+        let newTasks = {
+            ...task,
+            completed: roundedPercent === 0 ? false : roundedPercent === 100 ? true : task.completed,
+            percent: roundedPercent
         };
 
         DATA.editTask(taskId, newTasks);
@@ -354,7 +404,7 @@ const DATA = {
         let otherTasks = store.getState().main.tasks.filter(e => e.parentId !== currentId);
 
         for (let i = 0; i < newTasks.length; i++) {
-            otherTasks.push(newTasks[i]);    
+            otherTasks.push(newTasks[i]);
         }
 
         store.dispatch(setTasks(otherTasks));
@@ -506,7 +556,7 @@ const DATA = {
             });
         })
     },
-    
+
     // Other
     mainLoaded: () => {
         store.dispatch(setLoading(false));

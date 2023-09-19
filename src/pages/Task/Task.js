@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { confirmAlert } from 'react-confirm-alert';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
+import CachedIcon from '@mui/icons-material/Cached';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import "./Task.scss";
 
 import DATA from '../../utilities/dataHandler';
 
 import Header from '../../components/Layout/Header';
+import Modal from "../../components/Modal/Modal";
 import OptionsBox from '../../components/UnderBox/OptionsBox';
 import AddBox from '../../components/UnderBox/AddBox';
 import EditBox from '../../components/UnderBox/EditBox';
@@ -71,7 +74,6 @@ export default function Task(props) {
         // eslint-disable-next-line
     }, [loading, location])
 
-
     // Set task percent
     const setTaskPercent = (plus) => {
         let newPercent = plus ? current.percent + 1 : current.percent - 1;
@@ -94,28 +96,58 @@ export default function Task(props) {
 
     // Remove
     const remove = () => {
-        if (window.confirm("Are you sure you want to remove this " + isProject ? "project: " : "task: " + current.name)) {
-            setLoadingTask(true);
-
-            if (isProject) {
-                DATA.removeProject(project.id).then(() => {
-                    props.closeUnderBox();
-                    navigate("/dashboard");
-                });
-            } else {
-                DATA.removeTask(project.id, current.id).then(() => {
-                    props.closeUnderBox();
-                    navigate(-1);
-                });
+        confirmAlert({
+            overlayClassName: "modal",
+            customUI: ({ onClose }) => {
+                return (
+                    <Modal
+                        name="Removing"
+                        desc={"Are you sure you want to remove this " + isProject ? "project: " : "task: " + current.name}
+                        isConfirm={true}
+                        cancel={() => {
+                            onClose();
+                        }}
+                        confirm={() => {
+                            if (isProject) {
+                                DATA.removeProject(project.id).then(() => {
+                                    props.closeUnderBox();
+                                    navigate("/dashboard");
+                                });
+                            } else {
+                                DATA.removeTask(project.id, current.parentId, current.id, isProject, true).then(() => {
+                                    props.closeUnderBox();
+                                    navigate(-1);
+                                });
+                            }
+                        }}
+                    />
+                );
             }
-        }
+        });
     }
 
     // Remove single task
     const removeTask = (id, name) => {
-        if (window.confirm("Are you sure you want to remove this task: " + name)) {
-            DATA.removeTask(project.id, id);
-        }
+        confirmAlert({
+            overlayClassName: "modal",
+            customUI: ({ onClose }) => {
+                return (
+                    <Modal
+                        name="Removing"
+                        desc={"Are you sure you want to remove this task: " + name}
+                        isConfirm={true}
+                        cancel={() => {
+                            onClose();
+                        }}
+                        confirm={() => {
+                            DATA.removeTask(project.id, current.id, id, isProject).then(() => {
+                                onClose();
+                            });
+                        }}
+                    />
+                );
+            }
+        });
     }
 
     // Reorder tasks
@@ -207,34 +239,44 @@ export default function Task(props) {
                                 </Droppable>
                             </DragDropContext>
 
-                            <div className="task_end_line"/>
+                            <div className="task_end_line" />
                         </>}
                 </div>
 
-                {/* Add Quick */}
-                <span className="icon add_task quick" style={loadingTask ? {} : { backgroundColor: project.accent }} onClick={() => props.openUnderBox(
-                    "Add a new " + isProject ? "project" : "task",
-                    <AddBox
-                        projectId={project.id}
-                        currentId={current.id}
-                        closeUnderBox={props.closeUnderBox}
-                        accent={project.accent}
-                        quick={true} />
-                )}>
-                    <WhatshotIcon sx={{ fontSize: 28 }} />
-                </span>
+                {/* Options */}
+                <div className="task_options_box">
+                    {/* Reload */}
+                    <span className="icon task_option_button small" onClick={() => window.location.reload()}>
+                        <CachedIcon sx={{ fontSize: 28 }} />
+                    </span>
 
-                {/* Add */}
-                <span className="icon add_task" style={loadingTask ? {} : { backgroundColor: project.accent }} onClick={() => props.openUnderBox(
-                    "Add a new " + isProject ? "project" : "task",
-                    <AddBox
-                        projectId={project.id}
-                        currentId={current.id}
-                        closeUnderBox={props.closeUnderBox}
-                        accent={project.accent} />
-                )}>
-                    <AddIcon sx={{ fontSize: 40 }} />
-                </span>
+                    {/* Add Quick */}
+                    <span className="icon task_option_button small" style={loadingTask ? {} : { backgroundColor: project.accent }} onClick={() => props.openUnderBox(
+                        "Add a new " + isProject ? "project" : "task",
+                        <AddBox
+                            projectId={project.id}
+                            currentId={current.id}
+                            closeUnderBox={props.closeUnderBox}
+                            accent={project.accent}
+                            isAddingToProject={isProject}
+                            quick={true} />
+                    )}>
+                        <WhatshotIcon sx={{ fontSize: 28 }} />
+                    </span>
+
+                    {/* Add */}
+                    <span className="icon task_option_button" style={loadingTask ? {} : { backgroundColor: project.accent }} onClick={() => props.openUnderBox(
+                        "Add a new " + isProject ? "project" : "task",
+                        <AddBox
+                            projectId={project.id}
+                            currentId={current.id}
+                            closeUnderBox={props.closeUnderBox}
+                            accent={project.accent}
+                            isAddingToProject={isProject} />
+                    )}>
+                        <AddIcon sx={{ fontSize: 40 }} />
+                    </span>
+                </div>
             </div>
         </>
     )

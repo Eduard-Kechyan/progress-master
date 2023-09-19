@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import { confirmAlert } from 'react-confirm-alert';
 import "./UnderBox.scss";
 
 import Input from '../Form/Input';
 import Textarea from '../Form/Textarea';
+
+import Modal from '../Modal/Modal';
 
 import DATA from '../../utilities/dataHandler';
 
@@ -57,11 +60,24 @@ export default function AddBox(props) {
                     props.closeUnderBox(id);
                 }).catch((error) => {
                     if (error === "exists") {
-                        alert("A project with that name already exists!");
+                        confirmAlert({
+                            overlayClassName: "modal",
+                            customUI: ({ onClose }) => {
+                                return (
+                                    <Modal
+                                        name="Already Exists!"
+                                        desc={"A project with that name already exists!"}
+                                        confirm={() => {
+                                            onClose();
+                                        }}
+                                    />
+                                );
+                            }
+                        });
                     }
                 });
             } else {
-                DATA.addTask(props.projectId, props.currentId, newName, newDesc).then(() => {
+                DATA.addTask(props.projectId, props.currentId, newName, newDesc, props.isAddingToProject).then(() => {
                     props.closeUnderBox();
                 });
             }

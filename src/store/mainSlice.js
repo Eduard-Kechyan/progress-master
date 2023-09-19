@@ -15,7 +15,7 @@ export const mainSlice = createSlice({
             percent: 0,
             completed: 0,
             total: 0,
-        }
+        },
     },
     reducers: {
         // Projects
@@ -38,23 +38,28 @@ export const mainSlice = createSlice({
         setProjects: (state, action) => {
             state.projects = action.payload;
         },
-        
+
         // Tasks
         addTask: (state, action) => {
             state.tasks.push(action.payload);
             state.currentTasks.push(action.payload);
         },
         editTask: (state, action) => {
-            let newTasks = state.tasks.map(e => {
+            state.tasks = state.tasks.map(e => {
                 if (e.id === action.payload.id) {
                     return action.payload;
                 } else {
                     return e;
                 }
-            })
+            });
 
-            state.tasks = newTasks;
-            state.currentTasks = newTasks;
+            state.currentTasks = state.currentTasks.map(e => {
+                if (e.id === action.payload.id) {
+                    return action.payload;
+                } else {
+                    return e;
+                }
+            });
         },
         removeTask: (state, action) => {
             let newTasks = state.tasks.filter(e => e.id !== action.payload);

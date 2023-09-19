@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import CachedIcon from '@mui/icons-material/Cached';
 import { useSelector } from 'react-redux';
 import "./Dashboard.scss";
 
@@ -125,13 +126,21 @@ export default function Dashboard(props) {
               </>
           }
 
-          {/* Add */}
-          <span className="icon add_project" onClick={() => props.openUnderBox(
-            "Create a new Project",
-            <AddBox closeUnderBox={closeUnderBox} isProject={true} />
-          )}>
-            <AddIcon sx={{ fontSize: 40 }} />
-          </span>
+          {/* Options */}
+          <div className="dashboard_options_box">
+            {/* Reload */}
+            <span className="icon dashboard_option_button small" onClick={() => window.location.reload()}>
+              <CachedIcon sx={{ fontSize: 28 }} />
+            </span>
+
+            {/* Add */}
+            <span className="icon dashboard_option_button" onClick={() => props.openUnderBox(
+              "Create a new Project",
+              <AddBox closeUnderBox={closeUnderBox} isProject={true} />
+            )}>
+              <AddIcon sx={{ fontSize: 40 }} />
+            </span>
+          </div>
         </div >
       </div>
     </>

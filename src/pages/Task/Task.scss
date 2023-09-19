@@ -16,12 +16,12 @@
     align-items: center;
     .minus, .plus {
         @include icon_button;
-        &.disabled{
+        &.disabled {
             opacity: 0.2;
             pointer-events: none;
         }
     }
-    &.task{
+    &.task {
         width: calc(30% + 80px);
     }
 }
@@ -47,7 +47,8 @@
         justify-content: center;
         .icon {
             color: $grey;
-            &.button{@include icon_button;
+            &.button {
+                @include icon_button;
             }
         }
     }
@@ -79,32 +80,41 @@
             transform: scale(1)
         }
     }
-    &.isDragging{
+    &.isDragging {
         background-color: lighten($color: $dark, $amount: 10);
     }
 }
 
-.add_task {
-    @include icon_button;
+.task_options_box {
     position: fixed;
-    width: 50px;
-    height: 50px;
-    right: 20px;
+    justify-content: flex-end;
+    right: 0;
     bottom: 20px;
-    background-color: $grey;
-    border-radius: 100%;
-    color: white;
-    z-index: 8;
-    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
-    &.quick {
-        width: 40px;
-        height: 40px;
-        right: 85px;
-        bottom: 25px;
+    width: 100%;
+    height: 50px;
+    padding: 0 20px;
+    display: flex;
+    .task_option_button {
+        @include icon_button;
+        width: 50px;
+        height: 50px;
+        background-color: $grey;
+        border-radius: 100%;
+        color: white;
+        z-index: 8;
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
+        margin: 0 0 0 15px;
+        &.small {
+            width: 40px;
+            height: 40px;
+            right: 85px;
+            bottom: 25px;
+            margin: 5px 0 0 10px;
+        }
     }
 }
 
-.task_end_line{
+.task_end_line {
     width: 100%;
     height: 85px;
 }

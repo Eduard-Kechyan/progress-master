@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useTransition, a } from '@react-spring/web'
+import { useTransition, a } from '@react-spring/web';
 
 import DATA from './utilities/dataHandler';
 
@@ -44,7 +44,7 @@ const App = () => {
       DATA.mainLoaded();
     });
 
-    closeUnderBox();
+    setUnderBoxOpen(false);
   }, [])
 
   const toggleNav = () => {
