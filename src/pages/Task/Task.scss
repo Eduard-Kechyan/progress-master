@@ -6,7 +6,13 @@
     text-align: center;
     font-size: 16px;
     color: $grey;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 98px;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
 }
 
 .task_circle {
@@ -72,6 +78,9 @@
             width: 100%;
             line-height: 25px;
             margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             &:last-child {
                 color: $grey
             }

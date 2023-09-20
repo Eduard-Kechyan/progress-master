@@ -62,7 +62,7 @@ $top_height: 250px;
             margin: 0 10px 5px 0;
             width: calc(100% - 50px);
             text-align: center;
-            padding: 0 45px 0 0;
+            padding: 0 45px 0 10px;
             height: 40px;
             line-height: 40px;
             position: relative;
@@ -70,6 +70,9 @@ $top_height: 250px;
             border-radius: 4px;
             transition: 0.3s;
             position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             cursor: pointer;
             .icon {
                 @include icon;
@@ -131,6 +134,12 @@ $top_height: 250px;
             color: white;
             margin: 0;
             padding: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            height: calc(100% - 60px);
         }
     }
     .secondary {
@@ -174,6 +183,12 @@ $top_height: 250px;
         background-color: transparent;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         border-radius: 0;
+        span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: calc(100% - 60px);
+        }
         &:nth-last-child(2) {
             border-bottom: 0;
         }
@@ -182,35 +197,36 @@ $top_height: 250px;
             margin-right: 5px;
             margin-left: 5px;
         }
-    }   
+    }
 }
 
- .dashboard_options_box {
-     position: fixed;
-     justify-content: flex-end;
-     right: 0;
-     bottom: 20px;
-     width: 100%;
-     height: 50px;
-     padding: 0 20px;
-     display: flex;
-     .dashboard_option_button {
-         @include icon_button;
-         position: fixed;
-         width: 50px;
-         height: 50px;
-         background-color: $blue_b;
-         border-radius: 100%;
-         color: white;
-         z-index: 8;
-         box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
-         margin: 0 0 0 15px;
-         &.small {background-color: $grey;
-             width: 40px;
-             height: 40px;
-             right: 85px;
-             bottom: 25px;
-             margin: 5px 0 0 10px;
-         }
-     }
- }
+.dashboard_options_box {
+    position: fixed;
+    justify-content: flex-end;
+    right: 0;
+    bottom: 20px;
+    width: 100%;
+    height: 50px;
+    padding: 0 20px;
+    display: flex;
+    .dashboard_option_button {
+        @include icon_button;
+        position: fixed;
+        width: 50px;
+        height: 50px;
+        background-color: $blue_b;
+        border-radius: 100%;
+        color: white;
+        z-index: 8;
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
+        margin: 0 0 0 15px;
+        &.small {
+            background-color: $grey;
+            width: 40px;
+            height: 40px;
+            right: 85px;
+            bottom: 25px;
+            margin: 5px 0 0 10px;
+        }
+    }
+}

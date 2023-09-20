@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
@@ -26,6 +26,8 @@ export default function Task(props) {
     const [project, setProject] = useState(null);
     const [current, setCurrent] = useState(null);
 
+    const descRef = useRef(null);
+
     const loading = useSelector((state) => state.main.loading);
     const tasks = useSelector((state) => state.main.currentTasks);
 
@@ -51,7 +53,7 @@ export default function Task(props) {
 
                             setTimeout(() => {
                                 setLoadingTask(false);
-                            }, 400);
+                            }, 200);
                         })
                     });
                 } else {
@@ -64,7 +66,7 @@ export default function Task(props) {
 
                                 setTimeout(() => {
                                     setLoadingTask(false);
-                                }, 400);
+                                }, 200);
                             })
                         })
                     })
@@ -73,6 +75,39 @@ export default function Task(props) {
         }
         // eslint-disable-next-line
     }, [loading, location])
+
+    useEffect(() => {
+        let scrollInterval = null;
+
+        if (!loadingTask && descRef.current !== null && current !== null && current.desc !== "") {
+            let previousScrollTop = 0;
+            let dirDown = true;
+
+            scrollInterval = setInterval(() => {
+                if (dirDown) {
+                    if (previousScrollTop === descRef.current.scrollTop && descRef.current.scrollTop !== 0) {
+                        dirDown = false;
+                    } else {
+                        previousScrollTop = descRef.current.scrollTop;
+
+                        descRef.current.scrollTop++;
+                    }
+                } else {
+                    if (previousScrollTop === 0) {
+                        dirDown = true;
+                    } else {
+                        previousScrollTop = descRef.current.scrollTop;
+
+                        descRef.current.scrollTop--;
+                    }
+                }
+            }, 100);
+        }
+
+        return () => {
+            clearInterval(scrollInterval);
+        }
+    }, [current, loadingTask])
 
     // Set task percent
     const setTaskPercent = (plus) => {
@@ -197,7 +232,7 @@ export default function Task(props) {
                 <div className="layout_scroll_box">
                     {loadingTask ? <div className="loader" /> :
                         <>
-                            <h4 className="task_desc">
+                            <h4 className="task_desc" ref={descRef}>
                                 {current.desc === "" ? "No description, edit the " + (isProject ? "project" : "task") + " to add one!" : current.desc}
                             </h4>
 

@@ -24,7 +24,7 @@ const App = () => {
   const location = useLocation();
 
   const transitions = useTransition(location, {
-    config:{ duration: 300 },
+    config:{ duration: 100 },
     from: {
       transform: 'translate3d(100%,0,0)'
     },

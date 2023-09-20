@@ -10,7 +10,7 @@ header {
     width: 100%;
     height: 60px;
     padding: 10px 15px;
-    
+
     display: flex;
     .icon {
         @include icon_button;
@@ -27,7 +27,11 @@ header {
     text-align: center;
     color: $grey_b_light;
     font-size: 20px;
-    &.dashboard{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 10px;
+    L &.dashboard {
         margin-right: 35%;
     }
 }

@@ -72,6 +72,10 @@ nav {
         font-size: 18px;
         span {
             opacity: 0.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: calc(100% - 60px)
         }
         .icon {
             @include icon;
@@ -91,7 +95,7 @@ nav {
                 color: $main_dark;
             }
         }
-        &.settings{
+        &.settings {
             margin-top: auto;
             margin-bottom: 50px;
         }

@@ -22,7 +22,7 @@ import UTIL from './utilities';
 const getIdsOfChildrenToRemove = (tasks, newTaskId) => {
     let foundTasks = [];
 
-    function findTasks(taskId) {
+    const findTasks = (taskId) => {
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i].parentId === taskId) {
                 foundTasks.push({
@@ -58,6 +58,32 @@ const getIdsOfChildrenToRemove = (tasks, newTaskId) => {
         return task.id
     });
 }
+
+/*const updateProjectPercent = (oldChildren, oldTasks) => {
+    const setPercent = (children, tasks) => {
+        let currentPercentages = [];
+
+        for (let i = 0; i < children.length; i++) {
+            console.log(children[i]);
+            let tempTasks = tasks.find(task => task.id === children[i]);
+
+            if (tempTasks.children.length > 0) {
+                currentPercentages = [...currentPercentages, ...setPercent(tempTasks.children, oldTasks)];
+            } else {
+                currentPercentages.push({
+                    id: tempTasks.id,
+                    percent: tempTasks.percent
+                });
+            }
+        }
+
+        return currentPercentages;
+    }
+
+    let newTasks = setPercent(oldChildren, oldTasks);
+
+    return newTasks;
+};*/
 
 const DATA = {
     // Project
@@ -155,15 +181,40 @@ const DATA = {
             });
         });
     },
-    updateProjectData: (projectId) => {
-        //  let project = store.getState().main.projects.find(e => e.id === projectId);
-        // let tasks = store.getState().main.tasks.find(e => e.projectId === projectId);
+    updateProjectData: (projectId, oldTasks) => {
+        const updatePercent = (parentId) => {
+            let tasks = store.getState().main.tasks.filter(e => e.projectId === projectId);
+            let parentData = tasks.find(task => task.id === parentId);
+            let percent = 0;
+
+            if (parentData === undefined) {
+                parentData = store.getState().main.projects.find(project => project.id === projectId);
+            }
+
+            for (let i = 0; i < parentData.children.length; i++) {
+                percent += tasks.find(task => task.id === parentData.children[i]).percent;
+            }
+
+            let finalPercent = UTIL.round((100 / (parentData.children.length * 100)) * percent);
+
+            if (parentData.parentId === undefined) {
+                DATA.editProject(projectId, { percent: finalPercent });
+            } else {
+                DATA.editTask(parentData.id, { percent: finalPercent });
+
+                updatePercent(parentData.parentId);
+            }
+        };
+
+        updatePercent(oldTasks.parentId);
 
 
+        /*let project = store.getState().main.projects.find(e => e.id === projectId);
+        let tasks = store.getState().main.tasks.filter(e => e.projectId === projectId);
 
+        let newData = updateProjectPercent(project.children, tasks);
 
-
-
+        console.log(newData);*/
 
 
 
@@ -177,8 +228,6 @@ const DATA = {
          DATA.editProject(projectId, newProject);*/
 
         // DATA.updateCurrent(projectId, true);
-
-        //task.count
 
 
 
@@ -322,7 +371,16 @@ const DATA = {
 
                 let newChildren = task.children.filter(task => task !== taskId);
 
-                DATA.editTask(currentId, { children: newChildren });
+                tasks = tasks.map(task => {
+                    if (task.id === currentId) {
+                        return {
+                            ...task,
+                            children: newChildren
+                        }
+                    } else {
+                        return task;
+                    }
+                });
             }
 
             store.dispatch(setTasks(tasks));
@@ -364,7 +422,7 @@ const DATA = {
 
         DATA.editTask(taskId, newTasks);
 
-        DATA.updateProjectData(projectId);
+        DATA.updateProjectData(projectId, newTasks);
     },
     setTaskPercent: (projectId, taskId, newPercent) => {
         let task = store.getState().main.tasks.find(e => e.id === taskId);

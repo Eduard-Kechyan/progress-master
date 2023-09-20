@@ -1,6 +1,6 @@
 import React from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial'; 
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { useNavigate } from 'react-router-dom';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -41,7 +41,7 @@ export default function TaskItem(props) {
                         ref={provided.innerRef}
                         style={newStyles}
                     >
-                        {props.data.count === 0 ?
+                        {props.data.children.length === 0 ?
                             <div className="type" onClick={() => DATA.toggleTask(props.project.id, props.data.id)}>
                                 <span className="icon button" style={{ color: props.project.accent }}>
                                     {props.data.completed ?
@@ -51,12 +51,12 @@ export default function TaskItem(props) {
                             </div> :
                             <div className="type">
                                 <span className="icon" style={{ color: props.project.accent }}>
-                                    <FolderOpenIcon sx={{ fontSize: 34 }} />
+                                    <FolderSpecialIcon sx={{ fontSize: 34 }} />
                                 </span>
                             </div>}
                         <div className="name" onClick={() => handleClick()}>
                             <p>{props.data.name}</p>
-                            <p>{props.data.count} sub tasks</p>
+                            <p>{props.data.children.length} sub tasks</p>
                         </div>
                         <div className="percent">
                             <CircleChart accent={props.project.accent} percent={props.data.percent} small size={34} />
