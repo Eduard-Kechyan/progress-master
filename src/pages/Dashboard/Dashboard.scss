@@ -159,7 +159,7 @@ $top_height: 250px;
             width: 100%;
             margin: 0 0 20px 0;
         }
-        .completed {
+        .isCompleted {
             display: block;
             color: white;
             font-size: 16px;
@@ -209,6 +209,7 @@ $top_height: 250px;
     height: 50px;
     padding: 0 20px;
     display: flex;
+    pointer-events: none;
     .dashboard_option_button {
         @include icon_button;
         position: fixed;
@@ -220,6 +221,7 @@ $top_height: 250px;
         z-index: 8;
         box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3);
         margin: 0 0 0 15px;
+        pointer-events: auto;
         &.small {
             background-color: $grey;
             width: 40px;

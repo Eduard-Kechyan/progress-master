@@ -30,6 +30,7 @@ export default function Task(props) {
 
     const loading = useSelector((state) => state.main.loading);
     const tasks = useSelector((state) => state.main.currentTasks);
+    const breadcrumbs = useSelector((state) => state.main.breadcrumbs);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -51,6 +52,8 @@ export default function Task(props) {
                             setProject(projectValue);
                             setCurrent(projectValue);
 
+                            setBreadcrumbs(projectValue);
+
                             setTimeout(() => {
                                 setLoadingTask(false);
                             }, 200);
@@ -63,6 +66,8 @@ export default function Task(props) {
 
                             DATA.getTask(taskId).then((taskValue) => {
                                 setCurrent(taskValue);
+
+                                setBreadcrumbs(taskValue);
 
                                 setTimeout(() => {
                                     setLoadingTask(false);
@@ -108,6 +113,26 @@ export default function Task(props) {
             clearInterval(scrollInterval);
         }
     }, [current, loadingTask])
+
+    // Set breadcrumbs
+    const setBreadcrumbs = (tempCurrent) => {
+        if (breadcrumbs.some(crumb => crumb.id === tempCurrent.id)) {
+            // Remove crumbs
+            let index = breadcrumbs.findIndex(crumb => crumb.id === tempCurrent.id);
+
+            if (breadcrumbs.length - 1 !== index) {
+                DATA.removeCrumbs(breadcrumbs.slice(index));
+            }
+        } else {
+            // Add crumb
+            let newCrumb = {
+                name: tempCurrent.name,
+                id: tempCurrent.id,
+            };
+
+            DATA.addCrumbs(newCrumb);
+        }
+    }
 
     // Set task percent
     const setTaskPercent = (plus) => {
@@ -218,6 +243,8 @@ export default function Task(props) {
         <>
             <Header
                 goBack
+                useBreadcrumbs={!loadingTask}
+                projectId={loadingTask ? null : project.id}
                 hasOptions
                 loading={loadingTask}
                 toggle={props.toggleNav}
@@ -232,10 +259,29 @@ export default function Task(props) {
                 <div className="layout_scroll_box">
                     {loadingTask ? <div className="loader" /> :
                         <>
+                            {/* Breadcrumbs */}
+                            {breadcrumbs.length > 1 &&
+                                <div className="task_breadcrumbs">
+                                    {breadcrumbs.map((crumb, index) =>
+                                        <span
+                                            key={index}
+                                            className={["crumb", index === breadcrumbs.length - 1 ? "last" : null].join(" ")}
+                                            onClick={() => {
+                                                navigate(
+                                                    "/task/" + project.id,
+                                                    { state: { projectId: project.id, taskId: index === 0 ? "" : crumb.id, isProject: index === 0 } }
+                                                );
+                                            }}>
+                                            {crumb.name}
+                                        </span>)}
+                                </div>}
+
+                            {/* Description */}
                             <h4 className="task_desc" ref={descRef}>
                                 {current.desc === "" ? "No description, edit the " + (isProject ? "project" : "task") + " to add one!" : current.desc}
                             </h4>
 
+                            {/* Chart */}
                             <div className={["task_circle", tasks.length === 0 ? "task" : null].join(" ")}>
                                 {!isProject && tasks.length === 0 && <span
                                     className={["minus", current.percent === 0 ? "disabled" : null].join(" ")}
@@ -252,8 +298,10 @@ export default function Task(props) {
                                 </span>}
                             </div>
 
+                            {/* Sub task count */}
                             <h4 className="task_count">Sub tasks: [{tasks.length}]</h4>
 
+                            {/* Tasks */}
                             <DragDropContext onDragEnd={onDragEnd}>
                                 <Droppable droppableId={current.id} >
                                     {(provided) => (

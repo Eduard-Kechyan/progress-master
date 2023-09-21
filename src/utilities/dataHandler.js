@@ -12,52 +12,13 @@ import {
     setCurrentTasks,
     // Other
     setLoading,
-    setCurrent
+    setCurrent,
+    setBreadcrumbs,
 } from '../store/mainSlice';
 import store from '../store/store';
 import { v4 as uuid } from "uuid";
 
 import UTIL from './utilities';
-
-const getIdsOfChildrenToRemove = (tasks, newTaskId) => {
-    let foundTasks = [];
-
-    const findTasks = (taskId) => {
-        for (let i = 0; i < tasks.length; i++) {
-            if (tasks[i].parentId === taskId) {
-                foundTasks.push({
-                    id: tasks[i].id,
-                    checked: false
-                });
-            }
-        }
-    }
-
-    findTasks(newTaskId);
-
-    for (let i = 0; i < foundTasks.length; i++) {
-        // eslint-disable-next-line
-        if (!foundTasks[i].checked && tasks.some(task => task.parentId === foundTasks[i].id)) {
-            // eslint-disable-next-line
-            foundTasks = foundTasks.map(task => {
-                if (task.id === foundTasks[i].id) {
-                    return {
-                        id: task.id,
-                        checked: true
-                    }
-                }
-
-                return task;
-            });
-
-            findTasks(foundTasks[i].id);
-        }
-    }
-
-    return foundTasks.map(task => {
-        return task.id
-    });
-}
 
 /*const updateProjectPercent = (oldChildren, oldTasks) => {
     const setPercent = (children, tasks) => {
@@ -101,7 +62,7 @@ const DATA = {
                 id: uuid(),
                 name: name,
                 percent: 0,
-                completed: 0,
+                isCompleted: false,
                 children: [],
                 desc: "",
                 accent: accent
@@ -181,11 +142,12 @@ const DATA = {
             });
         });
     },
-    updateProjectData: (projectId, oldTasks) => {
+    updateProjectData: (projectId, taskId, currentId = "") => {
         const updatePercent = (parentId) => {
             let tasks = store.getState().main.tasks.filter(e => e.projectId === projectId);
             let parentData = tasks.find(task => task.id === parentId);
             let percent = 0;
+            let finalPercent = 0;
 
             if (parentData === undefined) {
                 parentData = store.getState().main.projects.find(project => project.id === projectId);
@@ -195,60 +157,29 @@ const DATA = {
                 percent += tasks.find(task => task.id === parentData.children[i]).percent;
             }
 
-            let finalPercent = UTIL.round((100 / (parentData.children.length * 100)) * percent);
+            if (parentData.children.length > 0) {
+                finalPercent = UTIL.round((100 / (parentData.children.length * 100)) * percent);
+            }
+
+            let newData = {
+                percent: finalPercent,
+                isCompleted: finalPercent === 100 ? true : false
+            };
 
             if (parentData.parentId === undefined) {
-                DATA.editProject(projectId, { percent: finalPercent });
+                DATA.editProject(projectId, newData);
             } else {
-                DATA.editTask(parentData.id, { percent: finalPercent });
+                DATA.editTask(parentData.id, newData);
 
                 updatePercent(parentData.parentId);
             }
         };
 
-        updatePercent(oldTasks.parentId);
-
-
-        /*let project = store.getState().main.projects.find(e => e.id === projectId);
-        let tasks = store.getState().main.tasks.filter(e => e.projectId === projectId);
-
-        let newData = updateProjectPercent(project.children, tasks);
-
-        console.log(newData);*/
-
-
-
-
-
-
-        /* let project = store.getState().main.projects.find(e => e.id === projectId);
- 
-         let newProject = updatePercentages(project);
- 
-         DATA.editProject(projectId, newProject);*/
-
-        // DATA.updateCurrent(projectId, true);
-
-
-
-
-        /*let project = store.getState().main.projects.find(e => e.id === id);
-
-        let completedAmount = 0;
-
-        for (let i = 0; i < project.tasks.length; i++) {
-            if (project.tasks[i].completed) {
-                completedAmount++;
-            }
+        if (taskId !== undefined) {
+            updatePercent(taskId);
+        } else if (currentId !== "") {
+            updatePercent(currentId);
         }
-
-        let newProject = {
-            ...project,
-            completed: completedAmount,
-            percent: round(completedAmount === 0 ? 0 : (100 / project.tasks.length) * completedAmount)
-        }
-
-        DATA.editProject(id, newProject);*/
     },
     getProjectOrder: (projectId, currentId) => {
         let tasks = store.getState().main.tasks.filter(e => e.projectId === projectId && e.parentId === currentId).length;
@@ -300,7 +231,7 @@ const DATA = {
                 order: DATA.getProjectOrder(projectId, currentId),
                 children: [],
                 percent: 0,
-                completed: 0
+                isCompleted: false
             }
 
             if (isProject) {
@@ -320,7 +251,9 @@ const DATA = {
 
                 resolve();
 
-                DATA.updateProjectData(projectId);
+                DATA.updateProjectData(projectId, newTaskData.id);
+
+                DATA.updateCurrent(projectId, true);
             }).catch((error) => {
                 store.dispatch(setLoading(false));
                 console.log(error);
@@ -329,7 +262,6 @@ const DATA = {
         });
     },
     editTask: (taskId, editedTask) => {
-        // TODO - This function doesn't remove the removed task id from it's parent's children array
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
@@ -354,7 +286,7 @@ const DATA = {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
-            let idsOfChildrenToRemove = getIdsOfChildrenToRemove(store.getState().main.tasks, taskId);
+            let idsOfChildrenToRemove = DATA.getIdsOfChildrenToRemove(store.getState().main.tasks, taskId);
 
             idsOfChildrenToRemove.push(taskId);
 
@@ -390,7 +322,9 @@ const DATA = {
 
                 DATA.setTasksOrder(projectId);
 
-                DATA.updateProjectData(projectId);
+                DATA.updateProjectData(projectId, {}, currentId);
+
+                DATA.updateCurrent(projectId, true);
 
                 resolve();
             }).catch((error) => {
@@ -414,30 +348,34 @@ const DATA = {
     toggleTask: (projectId, taskId) => {
         let task = store.getState().main.currentTasks.find(e => e.id === taskId);
 
-        let newTasks = {
+        let newTask = {
             ...task,
-            completed: !task.completed,
-            percent: task.completed ? 0 : 100
+            isCompleted: !task.isCompleted,
+            percent: task.isCompleted ? 0 : 100
         };
 
-        DATA.editTask(taskId, newTasks);
+        DATA.editTask(taskId, newTask).then(() => {
+            DATA.updateProjectData(projectId, newTask.parentId);
 
-        DATA.updateProjectData(projectId, newTasks);
+            DATA.updateCurrent(projectId, true);
+        });
     },
     setTaskPercent: (projectId, taskId, newPercent) => {
         let task = store.getState().main.tasks.find(e => e.id === taskId);
 
         let roundedPercent = Math.floor(newPercent);
 
-        let newTasks = {
+        let newTask = {
             ...task,
-            completed: roundedPercent === 0 ? false : roundedPercent === 100 ? true : task.completed,
+            isCompleted: roundedPercent === 0 ? false : roundedPercent === 100 ? true : task.isCompleted,
             percent: roundedPercent
         };
 
-        DATA.editTask(taskId, newTasks);
+        DATA.editTask(taskId, newTask).then(() => {
+            DATA.updateProjectData(projectId, newTask.parentId);
 
-        DATA.updateProjectData(projectId);
+            DATA.updateCurrent(projectId, true);
+        });
     },
     setTasksOrder: (projectId) => {
         let chosenTasks = store.getState().main.tasks.filter(e => e.projectId === projectId);
@@ -536,27 +474,29 @@ const DATA = {
             });
         });
     },
-    updateCurrent: (id, alt, total) => {
+    updateCurrent: (projectId, alt = false) => {
         if (alt) {
-            let project = store.getState().main.projects.find(e => e.id === id);
+            let project = store.getState().main.projects.find(e => e.id === projectId);
 
-            DATA.setCurrent({
-                ...project
-            });
+            let stats = DATA.getCurrentStats(projectId);
 
             DATA.setCurrent({
                 ...project,
-                total: total
+                total: stats.total,
+                isCompleted: stats.isCompleted,
             });
         } else {
-            if (id === store.getState().main.current.id && store.getState().main.projects.length > 0) {
-                let project = store.getState().main.projects[0];
+            if (projectId === store.getState().main.current.id && store.getState().main.projects.length > 0) {
+                let project = store.getState().main.projects.find(e => e.id === projectId);
 
                 const { tasks, ...filteredProject } = project;
 
+                let stats = DATA.getCurrentStats(projectId);
+
                 DATA.setCurrent({
                     ...filteredProject,
-                    total: total
+                    total: stats.total,
+                    isCompleted: stats.isCompleted,
                 });
             } else {
                 DATA.setCurrent({
@@ -565,10 +505,26 @@ const DATA = {
                     accent: "",
                     desc: "",
                     percent: 0,
-                    completed: 0,
+                    isCompleted: 0,
                     total: 0,
                 });
             }
+        }
+    },
+    getCurrentStats: (projectId) => {
+        let isCompleted = 0;
+
+        let tasks = store.getState().main.tasks.filter(task => task.projectId === projectId);
+
+        for (let i = 0; i < tasks.length; i++) {
+            if (tasks[i].isCompleted) {
+                isCompleted++;
+            }
+        }
+
+        return {
+            total: tasks.length,
+            isCompleted: isCompleted
         }
     },
 
@@ -578,6 +534,10 @@ const DATA = {
             store.dispatch(setProjects(importData));
 
             localForage.setItem('projects', store.getState().main.projects).then(() => {
+                if (importData.length === 1) {
+                    DATA.updateCurrent(importData[0].id, true);
+                }
+
                 resolve();
             }).catch((error) => {
                 console.log(error);
@@ -604,7 +564,7 @@ const DATA = {
             localForage.clear().then(() => {
                 DATA.getProjects();
                 DATA.getTasks();
-                DATA.updateCurrent("", false);
+                DATA.updateCurrent("");
 
                 resolve();
             }).catch((error) => {
@@ -620,14 +580,70 @@ const DATA = {
         store.dispatch(setLoading(false));
     },
     toggleLoading: (value) => {
-        if (value === undefined || value === null) {
-            let loading = store.getState().main.loading;
+        return new Promise((resolve, reject) => {
+            if (value === undefined || value === null) {
+                let loading = store.getState().main.loading;
 
-            store.dispatch(setLoading(!loading));
-        } else {
-            store.dispatch(setLoading(value));
-        }
+                store.dispatch(setLoading(!loading));
+            } else {
+                store.dispatch(setLoading(value));
+            }
+
+            resolve();
+        })
     },
+    getIdsOfChildrenToRemove: (tasks, newTaskId) => {
+        let foundTasks = [];
+
+        const findTasks = (taskId) => {
+            for (let i = 0; i < tasks.length; i++) {
+                if (tasks[i].parentId === taskId) {
+                    foundTasks.push({
+                        id: tasks[i].id,
+                        checked: false
+                    });
+                }
+            }
+        }
+
+        findTasks(newTaskId);
+
+        for (let i = 0; i < foundTasks.length; i++) {
+            // eslint-disable-next-line
+            if (!foundTasks[i].checked && tasks.some(task => task.parentId === foundTasks[i].id)) {
+                // eslint-disable-next-line
+                foundTasks = foundTasks.map(task => {
+                    if (task.id === foundTasks[i].id) {
+                        return {
+                            id: task.id,
+                            checked: true
+                        }
+                    }
+
+                    return task;
+                });
+
+                findTasks(foundTasks[i].id);
+            }
+        }
+
+        return foundTasks.map(task => {
+            return task.id
+        });
+    },
+    addCrumbs: (newCrumb) => {
+        let breadcrumbs = store.getState().main.breadcrumbs;
+
+        store.dispatch(setBreadcrumbs([...breadcrumbs, newCrumb]));
+    },
+    removeCrumbs: (crumbsIdsToRemove) => {
+        let breadcrumbs = store.getState().main.breadcrumbs;
+        let newBreadcrumbs = [];
+
+        newBreadcrumbs = breadcrumbs.filter(crumb => !crumbsIdsToRemove.find(toRemove => (toRemove.id === crumb.id)))
+
+        store.dispatch(setBreadcrumbs(newBreadcrumbs));
+    }
 };
 
 export default DATA;

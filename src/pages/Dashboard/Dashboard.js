@@ -36,10 +36,9 @@ export default function Dashboard(props) {
     }
   }, [])
 
-
   const closeUnderBox = (id) => {
     props.closeUnderBox();
-    navigate("/task/" + id, { state: { projectId: id, taskId:"", isProject: true } });
+    navigate("/task/" + id, { state: { projectId: id, taskId: "", isProject: true } });
   }
 
   return (
@@ -97,7 +96,7 @@ export default function Dashboard(props) {
             <CircleChart accent={current.accent} percent={current.percent} />
 
             {/* Stats */}
-            <span className="completed">{current.completed}/{current.total}</span>
+            <span className="isCompleted">{current.isCompleted}/{current.total}</span>
           </div>
         </div >
 
@@ -119,7 +118,7 @@ export default function Dashboard(props) {
                     <button
                       key={project.id}
                       className="project_item"
-                      onClick={() => navigate("/task/"+project.id, { state: { projectId: project.id, taskId: "", isProject: true } })}>
+                      onClick={() => navigate("/task/" + project.id, { state: { projectId: project.id, taskId: "", isProject: true } })}>
                       <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
                       <span style={{ color: project.accent }}>{project.name}</span>
                     </button>)}

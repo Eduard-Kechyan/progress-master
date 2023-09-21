@@ -13,9 +13,10 @@ export const mainSlice = createSlice({
             accent: "",
             desc: "",
             percent: 0,
-            completed: 0,
+            isCompleted: 0,
             total: 0,
         },
+        breadcrumbs: []
     },
     reducers: {
         // Projects
@@ -80,6 +81,9 @@ export const mainSlice = createSlice({
         },
         setCurrent: (state, action) => {
             state.current = action.payload;
+        },
+        setBreadcrumbs: (state, action) => {
+            state.breadcrumbs = action.payload;
         }
     },
 })
@@ -98,7 +102,8 @@ export const {
     setCurrentTasks,
     // Other
     setLoading,
-    setCurrent
+    setCurrent,
+    setBreadcrumbs,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

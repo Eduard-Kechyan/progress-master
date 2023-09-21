@@ -1,11 +1,13 @@
 import React from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import FolderSpecialIcon from '@mui/icons-material/FolderSpecial'; 
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { useNavigate } from 'react-router-dom';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Draggable } from 'react-beautiful-dnd';
 import "./Task.scss";
+import tinycolor from "tinycolor2";
 
 import DATA from '../../utilities/dataHandler';
 
@@ -31,11 +33,17 @@ export default function TaskItem(props) {
                 const newStyles = {
                     ...provided.draggableProps.style,
                     transform,
+                    backgroundColor: tinycolor(props.project.accent).lighten(5).toString()
                 };
 
                 return (
                     <div
-                        className={["task_item", snapshot.isDragging ? "isDragging" : null].join(" ")}
+                        className={[
+                            "task_item",
+                            snapshot.isDragging ? "isDragging" : null,
+                            props.data.isCompleted ? "isCompleted" : "isNotCompleted",
+                            tinycolor(props.project.accent).getLuminance() < 0.35 ? "isLight" : null
+                        ].join(" ")}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
@@ -43,8 +51,8 @@ export default function TaskItem(props) {
                     >
                         {props.data.children.length === 0 ?
                             <div className="type" onClick={() => DATA.toggleTask(props.project.id, props.data.id)}>
-                                <span className="icon button" style={{ color: props.project.accent }}>
-                                    {props.data.completed ?
+                                <span className="icon button" >
+                                    {props.data.isCompleted ?
                                         <CheckBoxIcon sx={{ fontSize: 34 }} /> :
                                         <CheckBoxOutlineBlankIcon sx={{ fontSize: 34 }} />}
                                 </span>
@@ -56,7 +64,10 @@ export default function TaskItem(props) {
                             </div>}
                         <div className="name" onClick={() => handleClick()}>
                             <p>{props.data.name}</p>
-                            <p>{props.data.children.length} sub tasks</p>
+                            <p>
+                                {props.data.children.length} sub tasks
+                                {props.data.desc !== "" && <span className="icon"><DescriptionIcon sx={{ fontSize: 20 }} /></span>}
+                            </p>
                         </div>
                         <div className="percent">
                             <CircleChart accent={props.project.accent} percent={props.data.percent} small size={34} />

@@ -32,6 +32,7 @@ a {
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
   &::selection {
     color: white;
     background-color: $blue_b;

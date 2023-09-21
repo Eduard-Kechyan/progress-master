@@ -64,20 +64,27 @@ const UTIL = {
             reader.readAsText(file);
         })
     },
-    mergeArrays: (a, b, predicate = (a, b) => a === b) => {
-        const c = [...a];
-        b.forEach((bItem) => (c.some((cItem) => predicate(bItem, cItem)) ? null : c.push(bItem)))
-        return c;
+    mergeByProperty: (target, source, prop) => {
+        let newTarget = [...target];
+
+        source.forEach(sourceElement => {
+            let targetElement = target.find(targetElement => {
+                return sourceElement[prop] === targetElement[prop];
+            })
+            targetElement ? Object.assign(targetElement, sourceElement) : newTarget.push(sourceElement);
+        })
+
+        return newTarget;
     },
     round: (value) => {
         let multiplier = Math.pow(10, 1 || 0);
         return Math.round(value * multiplier) / multiplier;
     },
     sortByOrder: (tasks) => {
-        let newTasks =[...tasks];
+        let newTasks = [...tasks];
 
         return newTasks.sort((a, b) => a.order - b.order);
-    }
+    },
 };
 
 export default UTIL;

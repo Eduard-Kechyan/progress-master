@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuid } from "uuid";
 import "./Settings.scss";
 
 import Header from '../../components/Layout/Header';
@@ -44,7 +45,7 @@ export default function Settings(props) {
     }
 
     const importData = (event) => {
-        DATA.toggleLoading(true).then(()=>{
+        DATA.toggleLoading(true).then(() => {
             UTIL.readFile(event).then(importData => {
                 DATA.getProjects().then((projectsValue) => {
                     DATA.getTasks().then((tasksValue) => {
@@ -53,8 +54,8 @@ export default function Settings(props) {
                         let newProjects = [];
                         let newTasks = [];
 
-                        newProjects = UTIL.mergeArrays(projectsValue, newImportData.projects);
-                        newTasks = UTIL.mergeArrays(tasksValue, newImportData.tasks);
+                        newProjects = UTIL.mergeByProperty(projectsValue, newImportData.projects, "id");
+                        newTasks = UTIL.mergeByProperty(tasksValue, newImportData.tasks, "id");
 
                         DATA.importProjects(newProjects).then(() => {
                             DATA.importTasks(newTasks);
@@ -69,10 +70,162 @@ export default function Settings(props) {
                 }).catch(() => {
                     DATA.toggleLoading(false);
                 })
-            }).catch(()=>{
+            }).catch(() => {
                 DATA.toggleLoading(false);
             })
         });
+    }
+
+    // TODO - Remove the eslint comment
+    // eslint-disable-next-line
+    const importDataAlt = (event) => {
+        UTIL.readFile(event).then(importData => {
+            let newImportData = JSON.parse(importData);
+            let newProject = null;
+            let newTasks = [];
+
+            newProject = {
+                name: newImportData[0]["Space Name"],
+                id: uuid(),
+                percent: 0,
+                isCompleted: false,
+                children: [],
+                desc: "",
+                accent: "#2d98da"
+            };
+
+            //////// FOLDERS ////////
+            let folderNames = [];
+
+            // Get folder names
+            for (let i = 0; i < newImportData.length; i++) {
+                if (!folderNames.includes(newImportData[i]["Folder Name"])) {
+                    folderNames.push(newImportData[i]["Folder Name"]);
+                }
+            }
+
+            // Add folder tasks
+            for (let i = 0; i < folderNames.length; i++) {
+                let newTask = {
+                    projectId: newProject.id,
+                    parentId: newProject.id,
+                    id: uuid(),
+                    name: folderNames[i],
+                    desc: "",
+                    order: i,
+                    children: [],
+                    percent: 0,
+                    isCompleted: false
+                };
+
+                newTasks.push(newTask);
+
+                newProject.children.push(newTask.id);
+            }
+
+            //////// LISTS ////////
+            let lists = [];
+
+            // Get list names
+            for (let i = 0; i < folderNames.length; i++) {
+                let newList = [];
+
+                for (let j = 0; j < newImportData.length; j++) {
+                    if (newImportData[j]["Folder Name"] === folderNames[i]) {
+                        if (!newList.some(e => e.name === newImportData[j]["List Name"])) {
+                            newList.push({
+                                name: newImportData[j]["List Name"],
+                                id: newProject.children[i]
+                            });
+                        }
+                    }
+                }
+
+                lists.push(newList);
+            }
+
+            for (let i = 0; i < lists.length; i++) {
+                for (let j = 0; j < lists[i].length; j++) {
+                    let newTask = {
+                        projectId: newProject.id,
+                        parentId: lists[i][j].id,
+                        id: uuid(),
+                        name: lists[i][j].name,
+                        desc: "",
+                        order: j,
+                        children: [],
+                        percent: 0,
+                        isCompleted: false
+                    };
+
+                    newTasks.push(newTask);
+
+                    for (let k = 0; k < folderNames.length; k++) {
+                        if (folderNames[k] === newTasks[k].name) {
+                            if (!newTasks[k].children.includes(newTask.id)) {
+                                newTasks[k].children.push(newTask.id);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //////// TASKS ////////
+            for (let i = 0; i < newImportData.length; i++) {
+                for (let j = 4; j < 20; j++) {
+                    if (newImportData[i]["List Name"] === newTasks[j].name) {
+                        let newTask = {
+                            projectId: newProject.id,
+                            parentId: newTasks[j].id,
+                            id: uuid(),
+                            tempId: newImportData[i]["Task ID"],
+                            tempParentId: newImportData[i]["Parent ID"],
+                            name: newImportData[i]["Task Name"],
+                            desc: newImportData[i]["Task Content"],
+                            order: 0,
+                            children: [],
+                            percent: newImportData[i]["Status"] === "complete" ? 100 : 0, // TODO - Check if this is necessary, if not, set it to 0
+                            isCompleted: newImportData[i]["Status"] === "complete" // TODO - Check if this is necessary, if not, set it to false
+                        };
+
+                        newTasks.push(newTask);
+
+                        newTasks[j].children.push(newTask.id);
+                    }
+                }
+            }
+
+            for (let i = 0; i < newTasks.length; i++) {
+                if (newTasks[i].tempParentId !== null && newTasks[i].tempParentId !== undefined) {
+                    for (let j = 0; j < newTasks.length; j++) {
+                        if (newTasks[j].tempId !== null && newTasks[j].tempId !== undefined && newTasks[j].tempId === newTasks[i].tempParentId) {
+                            if (!newTasks[j].children.includes(newTasks[i].tempId)) {
+                                newTasks[j].children.push(newTasks[i].id);
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Remove tempId and tempParentId from tasks here
+            newTasks = newTasks.map(task => {
+                delete task.tempId;
+                delete task.tempParentId;
+
+                return task;
+            });
+
+            console.log(newTasks);
+
+            let jsonData = JSON.stringify({
+                projects: [newProject],
+                tasks: newTasks
+            });
+
+            UTIL.downloadFile(jsonData, "progress_master_export_data_TEST.json", "text/json");
+        })
     }
 
     const clearData = () => {

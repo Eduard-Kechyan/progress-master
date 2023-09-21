@@ -54,7 +54,7 @@ export default function AddBox(props) {
                         accent: newAccent,
                         desc: "",
                         percent: 0,
-                        completed: 0,
+                        isCompleted: 0,
                         total: 0
                     });
                     props.closeUnderBox(id);
@@ -78,7 +78,12 @@ export default function AddBox(props) {
                 });
             } else {
                 DATA.addTask(props.projectId, props.currentId, newName, newDesc, props.isAddingToProject).then(() => {
-                    props.closeUnderBox();
+                    if (props.quick) {
+                        setNewName("");
+                        inputRef.current.focus();
+                    } else {
+                        props.closeUnderBox();
+                    }
                 });
             }
         }
