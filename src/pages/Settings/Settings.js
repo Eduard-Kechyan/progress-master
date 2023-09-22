@@ -378,7 +378,7 @@ export default function Settings(props) {
                                     <button onClick={() => clearData()}>Clear</button>
                                 </div>
                                 <div className="button_box">
-                                    <p>Reload App</p>
+                                    <p>Reload The App</p>
                                     <button onClick={() => reloadApp()}>Reload</button>
                                 </div>
                             </div>

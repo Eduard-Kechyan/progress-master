@@ -10,7 +10,7 @@ export default function Loading() {
   useEffect(() => {
     setTimeout(() => {
       navigate("/dashboard");
-    }, 1500);
+    }, 1000);
     // eslint-disable-next-line
   }, []);
 
