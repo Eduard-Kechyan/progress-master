@@ -80,6 +80,7 @@ nav {
         .icon {
             @include icon;
             margin: 0 5px 0 0;
+            color: $grey;
         }
         .single_chart {
             margin: 5px 5px 0 5px;
@@ -97,7 +98,7 @@ nav {
         }
         &.settings {
             margin-top: auto;
-            margin-bottom: 50px;
+            margin-bottom: 20px;
         }
     }
 }

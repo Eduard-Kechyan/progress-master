@@ -14,6 +14,7 @@ import {
     setLoading,
     setCurrent,
     setBreadcrumbs,
+    setSettings,
 } from '../store/mainSlice';
 import store from '../store/store';
 import { v4 as uuid } from "uuid";
@@ -108,10 +109,7 @@ const DATA = {
             localForage.setItem('projects', store.getState().main.projects).then(() => {
                 store.dispatch(setLoading(false));
 
-                DATA.setCurrent({
-                    ...newProjectData,
-                    total: store.getState().main.projects.length
-                })
+                DATA.updateCurrent(projectId, true);
 
                 resolve();
             }).catch((error) => {
@@ -218,7 +216,7 @@ const DATA = {
     },
 
     // Task
-    addTask: (projectId, currentId, name, desc, isProject) => {
+    addTask: (projectId, currentId, name, desc, tag, isProject) => {
         return new Promise((resolve, reject) => {
             store.dispatch(setLoading(true));
 
@@ -227,6 +225,7 @@ const DATA = {
                 parentId: currentId,
                 id: uuid(),
                 name: name,
+                tag: tag,
                 desc: desc,
                 order: DATA.getProjectOrder(projectId, currentId),
                 children: [],
@@ -267,6 +266,7 @@ const DATA = {
 
             let task = store.getState().main.tasks.find(e => e.id === taskId);
 
+            console.log(editedTask);
             let newTask = { ...task, ...editedTask };
 
             store.dispatch(editTask(newTask));
@@ -367,7 +367,7 @@ const DATA = {
 
         let newTask = {
             ...task,
-            isCompleted: roundedPercent === 0 ? false : roundedPercent === 100 ? true : task.isCompleted,
+            isCompleted: roundedPercent === 100 ? true : false,
             percent: roundedPercent
         };
 
@@ -480,8 +480,10 @@ const DATA = {
 
             let stats = DATA.getCurrentStats(projectId);
 
+            const { children, ...newProject } = project;
+
             DATA.setCurrent({
-                ...project,
+                ...newProject,
                 total: stats.total,
                 isCompleted: stats.isCompleted,
             });
@@ -489,7 +491,7 @@ const DATA = {
             if (projectId === store.getState().main.current.id && store.getState().main.projects.length > 0) {
                 let project = store.getState().main.projects.find(e => e.id === projectId);
 
-                const { tasks, ...filteredProject } = project;
+                const { children, ...filteredProject } = project;
 
                 let stats = DATA.getCurrentStats(projectId);
 
@@ -643,7 +645,38 @@ const DATA = {
         newBreadcrumbs = breadcrumbs.filter(crumb => !crumbsIdsToRemove.find(toRemove => (toRemove.id === crumb.id)))
 
         store.dispatch(setBreadcrumbs(newBreadcrumbs));
-    }
+    },
+    setCrumbs: (newCrumb) => {
+        store.dispatch(setBreadcrumbs([newCrumb]));
+    },
+    getSettings: () => {
+        return new Promise((resolve, reject) => {
+            localForage.getItem('settings').then((value) => {
+                if (value !== null) {
+                    store.dispatch(setSettings(value));
+                }
+
+                resolve();
+            }).catch((error) => {
+                console.log(error);
+                reject(error);
+            });
+        });
+    },
+    setSettings: (newSettings) => {
+        return new Promise((resolve, reject) => {
+            let settings = store.getState().main.settings;
+
+            store.dispatch(setSettings({ ...settings, ...newSettings }));
+
+            localForage.setItem('settings', store.getState().main.settings).then(() => {
+                resolve();
+            }).catch((error) => {
+                console.log(error);
+                reject(error);
+            });
+        });
+    },
 };
 
 export default DATA;

@@ -31,6 +31,7 @@ export default function Task(props) {
     const loading = useSelector((state) => state.main.loading);
     const tasks = useSelector((state) => state.main.currentTasks);
     const breadcrumbs = useSelector((state) => state.main.breadcrumbs);
+    const settings = useSelector((state) => state.main.settings);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ export default function Task(props) {
                             setProject(projectValue);
                             setCurrent(projectValue);
 
-                            setBreadcrumbs(projectValue);
+                            setBreadcrumbs(projectValue, true);
 
                             setTimeout(() => {
                                 setLoadingTask(false);
@@ -115,7 +116,7 @@ export default function Task(props) {
     }, [current, loadingTask])
 
     // Set breadcrumbs
-    const setBreadcrumbs = (tempCurrent) => {
+    const setBreadcrumbs = (tempCurrent, first = false) => {
         if (breadcrumbs.some(crumb => crumb.id === tempCurrent.id)) {
             // Remove crumbs
             let index = breadcrumbs.findIndex(crumb => crumb.id === tempCurrent.id);
@@ -130,7 +131,12 @@ export default function Task(props) {
                 id: tempCurrent.id,
             };
 
-            DATA.addCrumbs(newCrumb);
+            if (first) {
+                DATA.setCrumbs(newCrumb);
+            } else {
+                DATA.addCrumbs(newCrumb);
+            }
+
         }
     }
 
@@ -150,6 +156,10 @@ export default function Task(props) {
                 isProject={isProject}
                 name={current.name}
                 desc={current.desc}
+                tag={isProject ? null : {
+                    icon: current.tag.icon,
+                    color: current.tag.color
+                }}
                 accent={project.accent}
                 closeUnderBox={props.closeUnderBox} />);
     }
@@ -162,7 +172,7 @@ export default function Task(props) {
                 return (
                     <Modal
                         name="Removing"
-                        desc={"Are you sure you want to remove this " + isProject ? "project: " : "task: " + current.name}
+                        desc={"Are you sure you want to remove this " + (isProject ? "project: " : "task: ") + current.name}
                         isConfirm={true}
                         cancel={() => {
                             onClose();
@@ -210,7 +220,25 @@ export default function Task(props) {
         });
     }
 
-    // Reorder tasks
+    // Edit single task
+    const editTask = (taskData) => {
+        props.openUnderBox(
+            "Edit " + taskData.name,
+            <EditBox
+                id={taskData.id}
+                isProject={false}
+                name={taskData.name}
+                desc={taskData.desc}
+                tag={{
+                    icon: taskData.tag.icon,
+                    color: taskData.tag.color
+                }}
+                accent={""}
+                closeUnderBox={props.closeUnderBox} />);
+
+    }
+
+    // Reorder single tasks
     const onDragEnd = (result) => {
         if (!result.destination || result.source.index === result.destination.index) {
             return;
@@ -302,7 +330,7 @@ export default function Task(props) {
                             <h4 className="task_count">Sub tasks: [{tasks.length}]</h4>
 
                             {/* Tasks */}
-                            <DragDropContext onDragEnd={onDragEnd}>
+                            <DragDropContext onDragEnd={onDragEnd} onDragStart={() => document.activeElement.blur()}>
                                 <Droppable droppableId={current.id} >
                                     {(provided) => (
                                         <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -314,6 +342,7 @@ export default function Task(props) {
                                                         index={index}
                                                         project={{ id: project.id, accent: project.accent }}
                                                         currentId={current.id}
+                                                        editTask={editTask}
                                                         removeTask={removeTask} />
                                                 )}
                                             {provided.placeholder}
@@ -329,13 +358,13 @@ export default function Task(props) {
                 {/* Options */}
                 <div className="task_options_box">
                     {/* Reload */}
-                    <span className="icon task_option_button small" onClick={() => window.location.reload()}>
+                    {settings.showReload && <span className="icon task_option_button small" onClick={() => window.location.reload()}>
                         <CachedIcon sx={{ fontSize: 28 }} />
-                    </span>
+                    </span>}
 
                     {/* Add Quick */}
                     <span className="icon task_option_button small" style={loadingTask ? {} : { backgroundColor: project.accent }} onClick={() => props.openUnderBox(
-                        "Add a new " + isProject ? "project" : "task",
+                        "Add a new task (Quick)",
                         <AddBox
                             projectId={project.id}
                             currentId={current.id}
@@ -349,7 +378,7 @@ export default function Task(props) {
 
                     {/* Add */}
                     <span className="icon task_option_button" style={loadingTask ? {} : { backgroundColor: project.accent }} onClick={() => props.openUnderBox(
-                        "Add a new " + isProject ? "project" : "task",
+                        "Add a new task",
                         <AddBox
                             projectId={project.id}
                             currentId={current.id}

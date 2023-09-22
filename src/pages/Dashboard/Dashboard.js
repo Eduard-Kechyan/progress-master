@@ -21,8 +21,9 @@ export default function Dashboard(props) {
   const loading = useSelector((state) => state.main.loading);
   const projects = useSelector((state) => state.main.projects);
   const current = useSelector((state) => state.main.current);
+  const settings = useSelector((state) => state.main.settings);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
 
   useEffect(() => {
     let interval = setInterval(() => {
@@ -60,7 +61,7 @@ export default function Dashboard(props) {
             <div style={{ display: 'flex' }}>
               {/* Name */}
               <div className={["name", loading || projects.length <= 1 ? "disabled" : null].join(" ")} tabIndex="0">
-                <span>{current.name}</span>
+                <span className="text">{current.name}</span>
                 <span className="icon"><KeyboardArrowDownIcon sx={{ fontSize: 34 }} /></span>
 
                 {/* Drop Down */}
@@ -128,13 +129,14 @@ export default function Dashboard(props) {
           {/* Options */}
           <div className="dashboard_options_box">
             {/* Reload */}
-            <span className="icon dashboard_option_button small" onClick={() => window.location.reload()}>
+            {settings.showReload && <span className="icon dashboard_option_button small" onClick={() => window.location.reload()}>
               <CachedIcon sx={{ fontSize: 28 }} />
-            </span>
+            </span>}
+
 
             {/* Add */}
             <span className="icon dashboard_option_button" onClick={() => props.openUnderBox(
-              "Create a new Project",
+              "Create a new project",
               <AddBox closeUnderBox={closeUnderBox} isProject={true} />
             )}>
               <AddIcon sx={{ fontSize: 40 }} />

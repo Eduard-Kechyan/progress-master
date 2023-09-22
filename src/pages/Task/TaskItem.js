@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
+import EditIcon from '@mui/icons-material/Edit';
+import MoreVertSharpIcon from '@mui/icons-material/MoreVertSharp';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { useNavigate } from 'react-router-dom';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Draggable } from 'react-beautiful-dnd';
 import "./Task.scss";
 import tinycolor from "tinycolor2";
 
 import DATA from '../../utilities/dataHandler';
+import ICONS from '../../utilities/icons';
 
 import CircleChart from '../../components/CircleChart';
 
 export default function TaskItem(props) {
+    const optionsRef = useRef(null);
+
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -48,6 +53,11 @@ export default function TaskItem(props) {
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
                         style={newStyles}
+                        onClick={(event) => {
+                            if (event.target.id === "options_button") {
+                                optionsRef.current.focus();
+                            }
+                        }}
                     >
                         {props.data.children.length === 0 ?
                             <div className="type" onClick={() => DATA.toggleTask(props.project.id, props.data.id)}>
@@ -66,16 +76,30 @@ export default function TaskItem(props) {
                             <p>{props.data.name}</p>
                             <p>
                                 {props.data.children.length} sub tasks
+                                {props.data.tag.icon > 0 &&
+                                    <span
+                                        className={["icon", props.data.desc !== "" ? "has_desc" : null].join(" ")}
+                                        style={{ color: props.project.accent === props.data.tag.color ? "" : props.data.tag.color }}>
+                                        {ICONS.small[props.data.tag.icon].icon}
+                                    </span>}
                                 {props.data.desc !== "" && <span className="icon"><DescriptionIcon sx={{ fontSize: 20 }} /></span>}
                             </p>
                         </div>
                         <div className="percent">
                             <CircleChart accent={props.project.accent} percent={props.data.percent} small size={34} />
                         </div>
-                        <div className="options">
-                            <span className="icon" onClick={() => props.removeTask(props.data.id, props.data.name)}>
-                                <DeleteForeverIcon sx={{ fontSize: 34 }} />
-                            </span>
+                        <div className="options" tabIndex="0" ref={optionsRef}>
+                            <div id="options_button" className="icon button">
+                                <MoreVertSharpIcon sx={{ fontSize: 34 }} />
+                            </div>
+                            <div className="drop_down">
+                                <div className="icon_alt" onClick={() => props.editTask(props.data)}>
+                                    <EditIcon sx={{ fontSize: 28 }} />
+                                </div>
+                                <div className="icon_alt" onClick={() => props.removeTask(props.data.id, props.data.name)}>
+                                    <DeleteForeverIcon sx={{ fontSize: 28 }} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )

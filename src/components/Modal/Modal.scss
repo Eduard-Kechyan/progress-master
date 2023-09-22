@@ -38,7 +38,7 @@
     right: 0;
     bottom: 0;
     z-index: 1;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .modal_content {
@@ -46,10 +46,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    padding: 10px 30px;
+    width: calc(100% - 40px);
+    border-radius: 4px;
+    padding: 10px;
     text-align: center;
     z-index: 2;
+    background-color: white;
     .modal_name, .modal_desc {
         color: $grey;
         font-weight: normal;
@@ -57,7 +59,7 @@
         margin: 0 0 20px 0;
     }
     .modal_desc {
-        color: white;
+        color: $grey_b;
         font-size: 18px;
     }
 }

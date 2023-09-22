@@ -7,7 +7,6 @@
     border: 2px solid $grey;
     padding: 10px;
     border-radius: 4px;
-    
     .sub_name {
         text-align: center;
         font-weight: normal;
@@ -26,15 +25,51 @@
             margin: 0;
             color: $grey_b
         }
-        &:last-child{
+        &:last-child {
             margin-bottom: 0;
         }
+    }
+    .toggle {
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        color: $grey_b;
+        display: flex;
+        margin: 0 0 5px 0;
+        .icon {
+            @include icon;
+            width: 30px;
+            height: 30px;
+            margin: 0 5px 0 0;
+            transition: 0.3s;
+        }
+        &.last {
+            margin: 0;
+        }
+        &:active {
+            .icon {
+                transform: scale(0.8)
+            }
+        }
+    }
+    .divider {
+        margin: 5px auto;
+        width: 100px;
+        height: 2px;
+        background-color: $grey;
+    }
+    .info_text {
+        width: 100%;
+        margin: 0;
+        color: $grey_b;
+        text-align: center;
+        font-size: 14px;
     }
     button {
         @include button;
     }
 }
 
-.setting_import_input{
+.setting_import_input {
     display: none;
 }

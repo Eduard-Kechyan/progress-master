@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import AddIcon from '@mui/icons-material/Add';
 import { confirmAlert } from 'react-confirm-alert';
+
+import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 import "./UnderBox.scss";
 
 import Input from '../Form/Input';
@@ -9,6 +13,9 @@ import Textarea from '../Form/Textarea';
 import Modal from '../Modal/Modal';
 
 import DATA from '../../utilities/dataHandler';
+import ICONS from '../../utilities/icons';
+
+const icons = [...ICONS.normal];
 
 const colors = [
     "#f7b731",
@@ -26,11 +33,15 @@ export default function AddBox(props) {
     const [newName, setNewName] = useState("");
     const [newDesc, setNewDesc] = useState("");
     const [newAccent, setNewAccent] = useState("#f7b731");
+    const [newTagIcon, setNewTagIcon] = useState(0);
+    const [newTagColor, setNewTagColor] = useState("#f7b731");
 
     const inputRef = useRef();
 
     useEffect(() => {
-        inputRef.current.focus();
+        setTimeout(() => {
+            inputRef.current.focus();
+        }, 20);
         // eslint-disable-next-line
     }, [])
 
@@ -77,7 +88,7 @@ export default function AddBox(props) {
                     }
                 });
             } else {
-                DATA.addTask(props.projectId, props.currentId, newName, newDesc, props.isAddingToProject).then(() => {
+                DATA.addTask(props.projectId, props.currentId, newName, newDesc, { icon: newTagIcon, color: newTagColor }, props.isAddingToProject).then(() => {
                     if (props.quick) {
                         setNewName("");
                         inputRef.current.focus();
@@ -86,6 +97,42 @@ export default function AddBox(props) {
                     }
                 });
             }
+        }
+    }
+
+    const increaseTagIcon = () => {
+        if (newTagIcon === icons.length - 1) {
+            setNewTagIcon(0);
+        } else {
+            setNewTagIcon(newTagIcon + 1);
+        }
+    }
+
+    const decreaseTagIcon = () => {
+        if (newTagIcon === 0) {
+            setNewTagIcon(icons.length - 1);
+        } else {
+            setNewTagIcon(newTagIcon - 1);
+        }
+    }
+
+    const increaseTagColor = () => {
+        if (newTagColor === colors[colors.length - 1]) {
+            setNewTagColor(colors[0]);
+        } else {
+            let index = colors.indexOf(newTagColor);
+
+            setNewTagColor(colors[index + 1]);
+        }
+    }
+
+    const decreaseTagColor = () => {
+        if (newTagColor === colors[0]) {
+            setNewTagColor(colors[colors.length - 1]);
+        } else {
+            let index = colors.indexOf(newTagColor);
+
+            setNewTagColor(colors[index - 1]);
         }
     }
 
@@ -116,6 +163,32 @@ export default function AddBox(props) {
                         className={["color_item", newAccent === color ? "selected" : null].join(" ")}
                         onClick={() => setNewAccent(color)} />
                 )}
+            </div>}
+
+            {!props.isProject && !props.quick && <div className="tag_selector">
+                <p>Tag: {icons[newTagIcon].name}</p>
+
+                <div className="tag_box">
+                    <span className="icon" onClick={() => decreaseTagIcon()}>
+                        <ArrowBackIcon sx={{ fontSize: 34 }} />
+                    </span>
+                    <span className={["icon_alt", newTagIcon === 0 ? "none" : null].join(" ")} style={{ color: newTagColor }}>
+                        {icons[newTagIcon].icon}
+                    </span>
+                    <span className="icon" onClick={() => increaseTagIcon()}>
+                        <ArrowForwardIcon sx={{ fontSize: 34 }} />
+                    </span>
+                </div>
+
+                {newTagIcon > 0 && <div className="tag_box">
+                    <span className="icon" onClick={() => decreaseTagColor()}>
+                        <ArrowBackIcon sx={{ fontSize: 34 }} />
+                    </span>
+                    <span className="color_circle" style={{ backgroundColor: newTagColor }} />
+                    <span className="icon" onClick={() => increaseTagColor()}>
+                        <ArrowForwardIcon sx={{ fontSize: 34 }} />
+                    </span>
+                </div>}
             </div>}
 
             {/* Add */}

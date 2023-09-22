@@ -24,7 +24,7 @@ const App = () => {
   const location = useLocation();
 
   const transitions = useTransition(location, {
-    config:{ duration: 100 },
+    config: { duration: 100 },
     from: {
       transform: 'translate3d(100%,0,0)'
     },
@@ -40,7 +40,9 @@ const App = () => {
     let projectsPromise = DATA.getProjects();
     let tasksPromise = DATA.getTasks();
     let currentPromise = DATA.getCurrent();
-    Promise.all([projectsPromise, tasksPromise, currentPromise]).then(() => {
+    let settingsPromise = DATA.getSettings();
+
+    Promise.all([projectsPromise, tasksPromise, currentPromise, settingsPromise]).then(() => {
       DATA.mainLoaded();
     });
 

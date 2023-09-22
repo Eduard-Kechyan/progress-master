@@ -1,47 +1,103 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { confirmAlert } from 'react-confirm-alert';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { v4 as uuid } from "uuid";
+// import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+// import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'; 
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'; 
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'; 
+// import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'; 
+// import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+// import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
+// import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import "./Settings.scss";
 
 import Header from '../../components/Layout/Header';
+import Modal from '../../components/Modal/Modal';
 
 import DATA from '../../utilities/dataHandler';
 import UTIL from '../../utilities/utilities';
 
 export default function Settings(props) {
+    const [year, setYear] = useState(2023);
+
     const importInputRef = useRef(null);
+
+    const loading = useSelector((state) => state.main.loading);
+    const settings = useSelector((state) => state.main.settings);
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        setYear(new Date().getFullYear());
+    }, [])
+
     const exportData = () => {
-        if (window.confirm("Are you sure you want to export all data? This might take a while!")) {
-            let exportData = {
-                projects: [],
-                tasks: []
-            };
+        confirmAlert({
+            overlayClassName: "modal",
+            customUI: ({ onClose }) => {
+                return (
+                    <Modal
+                        name="Exporting"
+                        desc={"Are you sure you want to export all data? This might take a while!"}
+                        isConfirm={true}
+                        cancel={() => {
+                            onClose();
+                        }}
+                        confirm={() => {
+                            onClose();
 
-            DATA.getProjects().then((projectsValue) => {
-                exportData.projects = projectsValue;
+                            let exportData = {
+                                projects: [],
+                                tasks: []
+                            };
 
-                DATA.getTasks().then((tasksValue) => {
-                    exportData.tasks = tasksValue;
+                            DATA.getProjects().then((projectsValue) => {
+                                exportData.projects = projectsValue;
 
-                    let jsonData = JSON.stringify(exportData);
+                                DATA.getTasks().then((tasksValue) => {
+                                    exportData.tasks = tasksValue;
 
-                    let date = UTIL.getFullDate();
+                                    let jsonData = JSON.stringify(exportData);
 
-                    UTIL.downloadFile(jsonData, "progress_master_export_data_" + date + ".json", "text/json");
-                })
-            })
-        }
+                                    let date = UTIL.getFullDate();
+
+                                    UTIL.downloadFile(jsonData, "progress_master_export_data_" + date + ".json", "text/json");
+                                })
+                            })
+                        }}
+                    />
+                );
+            }
+        });
     }
 
     const clickImportInput = () => {
-        if (window.confirm("Warning! Data will be overwritten! Are you sure you want to continue?")) {
-            importInputRef.current.value = null;
+        confirmAlert({
+            overlayClassName: "modal",
+            customUI: ({ onClose }) => {
+                return (
+                    <Modal
+                        name="Importing"
+                        desc={"Warning! Data will be overwritten! Are you sure you want to continue?"}
+                        isConfirm={true}
+                        cancel={() => {
+                            onClose();
+                        }}
+                        confirm={() => {
+                            onClose();
 
-            importInputRef.current.click();
-        }
+                            importInputRef.current.value = null;
+
+                            importInputRef.current.click();
+                        }}
+                    />
+                );
+            }
+        });
     }
 
     const importData = (event) => {
@@ -229,12 +285,37 @@ export default function Settings(props) {
     }
 
     const clearData = () => {
-        if (window.confirm("Are you sure you want to clear all data? This can't be undone!")) {
-            DATA.clearData().then(() => {
-                navigate("/");
-                window.location.reload();
-            });
-        }
+        confirmAlert({
+            overlayClassName: "modal",
+            customUI: ({ onClose }) => {
+                return (
+                    <Modal
+                        name="Clearing"
+                        desc={"Are you sure you want to clear all data? This can't be undone!"}
+                        isConfirm={true}
+                        cancel={() => {
+                            onClose();
+                        }}
+                        confirm={() => {
+                            onClose();
+
+                            DATA.clearData().then(() => {
+                                navigate("/");
+                                window.location.reload();
+                            });
+                        }}
+                    />
+                );
+            }
+        });
+    }
+
+    const toggleSettingsProperty = (property) => {
+        let newSettings = { ...settings };
+
+        newSettings[property] = !newSettings[property];
+
+        DATA.setSettings(newSettings);
     }
 
     return (
@@ -251,22 +332,62 @@ export default function Settings(props) {
 
             <div className="layout_container">
                 <div className="layout_scroll_box">
-                    <div className="settings_block">
-                        <h3 className="sub_name">Data</h3>
+                    {loading ? <div className="loader" /> :
+                        <>
+                            {/* Data */}
+                            <div className="settings_block">
+                                <h3 className="sub_name">Data</h3>
 
-                        <div className="button_box">
-                            <p>Export all data</p>
-                            <button onClick={() => exportData()}>Export</button>
-                        </div>
-                        <div className="button_box">
-                            <p>Import new data</p>
-                            <button onClick={() => clickImportInput()}>Import</button>
-                        </div>
-                        <div className="button_box">
-                            <p>Clear all data</p>
-                            <button onClick={() => clearData()}>Clear</button>
-                        </div>
-                    </div>
+                                <div className="button_box">
+                                    <p>Export all data</p>
+                                    <button onClick={() => exportData()}>Export</button>
+                                </div>
+                                <div className="button_box">
+                                    <p>Import new data</p>
+                                    <button onClick={() => clickImportInput()}>Import</button>
+                                </div>
+                                <div className="button_box">
+                                    <p>Clear all data</p>
+                                    <button onClick={() => clearData()}>Clear</button>
+                                </div>
+                            </div>
+
+                            {/* Options */}
+                            <div className="settings_block">
+                                <h3 className="sub_name">Options</h3>
+
+                                <div className="toggle" onClick={() => toggleSettingsProperty("darkMode")}>
+                                    <span className="icon">
+                                        {settings.darkMode ?
+                                            <DarkModeOutlinedIcon /> :
+                                            < LightModeOutlinedIcon />}
+                                    </span>
+                                    <span>Theme - {settings.darkMode ? "Dark" : "Light"}</span>
+                                </div>
+
+                                <div className="toggle last" onClick={() => toggleSettingsProperty("showReload")}>
+                                    <span className="icon">
+                                        {settings.showReload ?
+                                            <VisibilityOutlinedIcon /> :
+                                            < VisibilityOffOutlinedIcon />}
+                                    </span>
+                                    <span>Reload Buttons - {settings.showReload ? "Showing" : "Hidden"}</span>
+                                </div>
+                            </div>
+
+                            {/* Info */}
+                            <div className="settings_block">
+                                <h3 className="sub_name">Information</h3>
+
+                                <p className="info_text">v.0.0.1</p>
+
+                                <div className="divider" />
+
+                                <p className="info_text">© 2023 - {year}, Eduard Kechyan.</p>
+                                <p className="info_text">All Rights Reserved.</p>
+                            </div>
+                        </>
+                    }
 
                     {/* Import Input */}
                     <input

@@ -4,6 +4,10 @@ export const mainSlice = createSlice({
     name: 'projects',
     initialState: {
         loading: true,
+        settings: {
+            darkMode: true,
+            showReload: false,
+        },
         projects: [],
         tasks: [],
         currentTasks: [],
@@ -16,7 +20,7 @@ export const mainSlice = createSlice({
             isCompleted: 0,
             total: 0,
         },
-        breadcrumbs: []
+        breadcrumbs: [],
     },
     reducers: {
         // Projects
@@ -84,7 +88,10 @@ export const mainSlice = createSlice({
         },
         setBreadcrumbs: (state, action) => {
             state.breadcrumbs = action.payload;
-        }
+        },
+        setSettings: (state, action) => {
+            state.settings = action.payload;
+        },
     },
 })
 
@@ -104,6 +111,7 @@ export const {
     setLoading,
     setCurrent,
     setBreadcrumbs,
+    setSettings,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;
