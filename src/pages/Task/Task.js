@@ -340,6 +340,7 @@ export default function Task(props) {
                                                         key={taskItem.id}
                                                         data={taskItem}
                                                         index={index}
+                                                        darkMode={settings.darkMode}
                                                         project={{ id: project.id, accent: project.accent }}
                                                         currentId={current.id}
                                                         editTask={editTask}

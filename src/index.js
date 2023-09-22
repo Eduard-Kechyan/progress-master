@@ -4,7 +4,7 @@ import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from './store/store';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import {register} from './serviceWorkerRegistration';
 
 import App from "./App";
 
@@ -33,7 +33,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(app);
 
-serviceWorkerRegistration.register();
+register();
 /*
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register(serviceWorker).then(() => {

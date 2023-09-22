@@ -23,7 +23,7 @@ export default function Dashboard(props) {
   const current = useSelector((state) => state.main.current);
   const settings = useSelector((state) => state.main.settings);
 
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   useEffect(() => {
     let interval = setInterval(() => {

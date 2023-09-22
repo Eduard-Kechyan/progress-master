@@ -1,132 +1,132 @@
-import DoNotDisturbOutlinedIcon from '@mui/icons-material/DoNotDisturbOutlined';
-import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
-import AccessAlarmOutlinedIcon from '@mui/icons-material/AccessAlarmOutlined';
-import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
-import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
-import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined';
-import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
-import SportsEsportsOutlinedIcon from '@mui/icons-material/SportsEsportsOutlined';
-import PhoneAndroidOutlinedIcon from '@mui/icons-material/PhoneAndroidOutlined';
-import DesktopWindowsOutlinedIcon from '@mui/icons-material/DesktopWindowsOutlined';
-import GamepadOutlinedIcon from '@mui/icons-material/GamepadOutlined';
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import BugReportIcon from '@mui/icons-material/BugReport';
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import DataSaverOffIcon from '@mui/icons-material/DataSaverOff';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
+import GamepadIcon from '@mui/icons-material/Gamepad';
 
 const ICONS = {
     normal: [
         {
-            icon: <DoNotDisturbOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <DoNotDisturbIcon sx={{ fontSize: 34 }} />,
             name: "None"
         },
         {
-            icon: <BugReportOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <BugReportIcon sx={{ fontSize: 34 }} />,
             name: "Bug"
         },
         {
-            icon: <StarBorderOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <StarBorderIcon sx={{ fontSize: 34 }} />,
             name: "Favorite"
         },
         {
-            icon: <AccessAlarmOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <AccessAlarmIcon sx={{ fontSize: 34 }} />,
             name: "Timed"
         },
         {
-            icon: <PhotoCameraOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <PhotoCameraIcon sx={{ fontSize: 34 }} />,
             name: "Photo"
         },
         {
-            icon: <HelpOutlineOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <HelpOutlineIcon sx={{ fontSize: 34 }} />,
             name: "Question"
         },
         {
-            icon: <ErrorOutlineOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <ErrorOutlineIcon sx={{ fontSize: 34 }} />,
             name: "Exclamation"
         },
         {
-            icon: <RefreshOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <RefreshIcon sx={{ fontSize: 34 }} />,
             name: "Restart"
         },
         {
-            icon: <DataSaverOffOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <DataSaverOffIcon sx={{ fontSize: 34 }} />,
             name: "Data"
         },
         {
-            icon: <AttachMoneyOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <AttachMoneyIcon sx={{ fontSize: 34 }} />,
             name: "Money"
         },
         {
-            icon: <SportsEsportsOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <SportsEsportsIcon sx={{ fontSize: 34 }} />,
             name: "Game"
         },
         {
-            icon: <PhoneAndroidOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <PhoneAndroidIcon sx={{ fontSize: 34 }} />,
             name: "Mobile"
         },
         {
-            icon: <DesktopWindowsOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <DesktopWindowsIcon sx={{ fontSize: 34 }} />,
             name: "Desktop"
         },
         {
-            icon: <GamepadOutlinedIcon sx={{ fontSize: 34 }} />,
+            icon: <GamepadIcon sx={{ fontSize: 34 }} />,
             name: "Console"
         },
     ],
     small: [
         {
-            icon: <DoNotDisturbOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <DoNotDisturbIcon sx={{ fontSize: 20 }} />,
             name: "None"
         },
         {
-            icon: <BugReportOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <BugReportIcon sx={{ fontSize: 20 }} />,
             name: "Bug"
         },
         {
-            icon: <StarBorderOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <StarBorderIcon sx={{ fontSize: 20 }} />,
             name: "Favorite"
         },
         {
-            icon: <AccessAlarmOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <AccessAlarmIcon sx={{ fontSize: 20 }} />,
             name: "Timed"
         },
         {
-            icon: <PhotoCameraOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <PhotoCameraIcon sx={{ fontSize: 20 }} />,
             name: "Photo"
         },
         {
-            icon: <HelpOutlineOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <HelpOutlineIcon sx={{ fontSize: 20 }} />,
             name: "Question"
         },
         {
-            icon: <ErrorOutlineOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <ErrorOutlineIcon sx={{ fontSize: 20 }} />,
             name: "Exclamation"
         },
         {
-            icon: <RefreshOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <RefreshIcon sx={{ fontSize: 20 }} />,
             name: "Restart"
         },
         {
-            icon: <DataSaverOffOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <DataSaverOffIcon sx={{ fontSize: 20 }} />,
             name: "Data"
         },
         {
-            icon: <AttachMoneyOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <AttachMoneyIcon sx={{ fontSize: 20 }} />,
             name: "Money"
         },
         {
-            icon: <SportsEsportsOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />,
             name: "Game"
         },
         {
-            icon: <PhoneAndroidOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <PhoneAndroidIcon sx={{ fontSize: 20 }} />,
             name: "Mobile"
         },
         {
-            icon: <DesktopWindowsOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <DesktopWindowsIcon sx={{ fontSize: 20 }} />,
             name: "Desktop"
         },
         {
-            icon: <GamepadOutlinedIcon sx={{ fontSize: 20 }} />,
+            icon: <GamepadIcon sx={{ fontSize: 20 }} />,
             name: "Console"
         },
     ]

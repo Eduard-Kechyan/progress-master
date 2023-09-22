@@ -6,14 +6,16 @@ import { v4 as uuid } from "uuid";
 // import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 // import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'; 
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'; 
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'; 
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 // import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'; 
 // import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 // import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
 // import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import "./Settings.scss";
+
+import { unregister } from '../../serviceWorkerRegistration';
 
 import Header from '../../components/Layout/Header';
 import Modal from '../../components/Modal/Modal';
@@ -310,6 +312,31 @@ export default function Settings(props) {
         });
     }
 
+    const reloadApp = () => {
+        confirmAlert({
+            overlayClassName: "modal",
+            customUI: ({ onClose }) => {
+                return (
+                    <Modal
+                        name="Reloading"
+                        desc={"The app will reload after clearing the cache!"}
+                        isConfirm={false}
+                        cancel={() => {
+                            onClose();
+                        }}
+                        confirm={() => {
+                            onClose();
+                            unregister();
+
+                            navigate("/");
+                            window.location.reload();
+                        }}
+                    />
+                );
+            }
+        });
+    }
+
     const toggleSettingsProperty = (property) => {
         let newSettings = { ...settings };
 
@@ -349,6 +376,10 @@ export default function Settings(props) {
                                 <div className="button_box">
                                     <p>Clear all data</p>
                                     <button onClick={() => clearData()}>Clear</button>
+                                </div>
+                                <div className="button_box">
+                                    <p>Reload App</p>
+                                    <button onClick={() => reloadApp()}>Reload</button>
                                 </div>
                             </div>
 

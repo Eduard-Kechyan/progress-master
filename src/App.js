@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useTransition, a } from '@react-spring/web';
+import { useSelector } from 'react-redux';
 
 import DATA from './utilities/dataHandler';
 
@@ -23,6 +24,8 @@ const App = () => {
 
   const location = useLocation();
 
+  const settings = useSelector((state) => state.main.settings);
+  
   const transitions = useTransition(location, {
     config: { duration: 100 },
     from: {
@@ -92,7 +95,7 @@ const App = () => {
       </>}
 
       {transitions((styles, item) => (
-        <a.div style={styles} className="layout_wrapper">
+          <a.div style={styles} className={["layout_wrapper", settings.darkMode ? null : "light_mode"].join(" ")}>
           <Routes location={item}>
             {/* Loading */}
             <Route exact path="/" element={<Loading />} />

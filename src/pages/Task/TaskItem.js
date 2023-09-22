@@ -47,6 +47,7 @@ export default function TaskItem(props) {
                             "task_item",
                             snapshot.isDragging ? "isDragging" : null,
                             props.data.isCompleted ? "isCompleted" : "isNotCompleted",
+                            props.darkMode ? null : "light_mode",
                             tinycolor(props.project.accent).getLuminance() < 0.35 ? "isLight" : null
                         ].join(" ")}
                         {...provided.draggableProps}

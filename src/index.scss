@@ -96,17 +96,10 @@ code {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10;
-}
-
-.layout_wrapper_extra {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 11;
-  background-color: $main_dark;
+  z-index: 10;background-color: $main_dark;
+  &.light_mode {
+    background-color: white;
+  }
 }
 
 .layout_container {
@@ -117,7 +110,6 @@ code {
   bottom: 0;
   z-index: 10;
   padding: 70px 10px 10px 10px;
-  background-color: $main_dark;
 }
 
 .layout_scroll_box {
@@ -132,7 +124,6 @@ code {
 }
 
 .layout_name {
-
   width: 100%;
   text-align: center;
   font-weight: normal;

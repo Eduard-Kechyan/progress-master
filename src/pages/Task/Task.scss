@@ -94,6 +94,9 @@
             }
         }
     }
+    .percent {
+        width: 34px;
+    }
     .options {
         .drop_down {
             position: absolute;
@@ -137,7 +140,7 @@
     .name {
         @include button;
         background-color: transparent;
-        width: calc(100% - 150px);
+        width: calc(100% - 136px);
         height: auto;
         padding: 10px 0;
         display: flex;
@@ -156,9 +159,9 @@
                 .icon {
                     position: absolute;
                     top: 2px;
-                    right: 10px;
-                    &.has_desc{
-right: 30px;
+                    right: 15px;
+                    &.has_desc {
+                        right: 35px;
                     }
                 }
             }
@@ -195,6 +198,12 @@ right: 30px;
                     color: $grey_b;
                 }
             }
+        }
+    }
+    &.light_mode {
+        background-color: $grey_b;
+        &.isNotCompleted {
+            background-color: $grey_light !important;
         }
     }
 }
