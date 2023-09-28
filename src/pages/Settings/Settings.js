@@ -3,16 +3,8 @@ import { confirmAlert } from 'react-confirm-alert';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { v4 as uuid } from "uuid";
-// import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-// import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-// import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'; 
-// import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-// import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
-// import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import "./Settings.scss";
 
 import { unregister } from '../../serviceWorkerRegistration';
@@ -32,6 +24,13 @@ export default function Settings(props) {
     const settings = useSelector((state) => state.main.settings);
 
     const navigate = useNavigate();
+
+    const backgrounds = [
+        process.env.PUBLIC_URL + "/images/backgrounds/bg_0.jpg",
+        process.env.PUBLIC_URL + "/images/backgrounds/bg_1.jpg",
+        process.env.PUBLIC_URL + "/images/backgrounds/bg_2.jpg",
+        process.env.PUBLIC_URL + "/images/backgrounds/bg_3.jpg",
+    ];
 
     useEffect(() => {
         setYear(new Date().getFullYear());
@@ -345,6 +344,14 @@ export default function Settings(props) {
         DATA.setSettings(newSettings);
     }
 
+    const setBackground = (order) => {
+        let newSettings = { ...settings };
+
+        newSettings.background = order;
+
+        DATA.setSettings(newSettings);
+    }
+
     return (
         <>
             <Header
@@ -361,6 +368,41 @@ export default function Settings(props) {
                 <div className="layout_scroll_box">
                     {loading ? <div className="loader" /> :
                         <>
+                            {/* Options */}
+                            <div className="settings_block">
+                                <h3 className="sub_name">Options</h3>
+
+                                {/* Dark Mode */}
+                                <div className="toggle" onClick={() => toggleSettingsProperty("darkMode")}>
+                                    <span className="icon">
+                                        {settings.darkMode ?
+                                            <CheckBoxIcon /> :
+                                            < CheckBoxOutlineBlankIcon />}
+                                    </span>
+                                    <span className="name">Dark theme</span>
+                                </div>
+
+                                {/* Reload */}
+                                <div className="toggle" onClick={() => toggleSettingsProperty("showReload")}>
+                                    <span className="icon">
+                                        {settings.showReload ?
+                                            <CheckBoxIcon /> :
+                                            < CheckBoxOutlineBlankIcon />}
+                                    </span>
+                                    <span className="name">Show reload buttons</span>
+                                </div>
+
+                                {/* Ordering */}
+                                <div className="toggle last" onClick={() => toggleSettingsProperty("completedToEnd")}>
+                                    <span className="icon">
+                                        {settings.completedToEnd ?
+                                            < CheckBoxIcon /> :
+                                            < CheckBoxOutlineBlankIcon />}
+                                    </span>
+                                    <span className="name">Put completed tasks at the end</span>
+                                </div>
+                            </div>
+
                             {/* Data */}
                             <div className="settings_block">
                                 <h3 className="sub_name">Data</h3>
@@ -383,26 +425,19 @@ export default function Settings(props) {
                                 </div>
                             </div>
 
-                            {/* Options */}
+                            {/* Background */}
                             <div className="settings_block">
-                                <h3 className="sub_name">Options</h3>
+                                <h3 className="sub_name">Background</h3>
 
-                                <div className="toggle" onClick={() => toggleSettingsProperty("darkMode")}>
-                                    <span className="icon">
-                                        {settings.darkMode ?
-                                            <DarkModeOutlinedIcon /> :
-                                            < LightModeOutlinedIcon />}
-                                    </span>
-                                    <span>Theme - {settings.darkMode ? "Dark" : "Light"}</span>
-                                </div>
-
-                                <div className="toggle last" onClick={() => toggleSettingsProperty("showReload")}>
-                                    <span className="icon">
-                                        {settings.showReload ?
-                                            <VisibilityOutlinedIcon /> :
-                                            < VisibilityOffOutlinedIcon />}
-                                    </span>
-                                    <span>Reload Buttons - {settings.showReload ? "Showing" : "Hidden"}</span>
+                                <div className="settings_background">
+                                    {backgrounds.map((bg, index) =>
+                                        <div
+                                            key={index}
+                                            className={["settings_bg_item", settings.background === index ? "selected" : null].join(" ")}
+                                            onClick={() => setBackground(index)}>
+                                            <img src={bg} alt="Bg 1" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

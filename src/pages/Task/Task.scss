@@ -40,6 +40,7 @@
     padding: 10px;
     border-radius: 4px;
     border: 2px solid $grey;
+    white-space: pre-wrap;
     &::-webkit-scrollbar {
         width: 0;
     }

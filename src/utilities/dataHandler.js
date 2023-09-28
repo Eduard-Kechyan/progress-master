@@ -126,7 +126,7 @@ const DATA = {
             store.dispatch(removeProject(projectId));
 
             localForage.setItem('projects', store.getState().main.projects).then(() => {
-                store.dispatch(setLoading(false));
+                //store.dispatch(setLoading(false));
 
                 DATA.updateCurrent(projectId);
 
@@ -454,9 +454,17 @@ const DATA = {
     },
 
     // Current
-    setCurrent: (current) => {
-        localForage.setItem('current', current).then(() => {
-            store.dispatch(setCurrent(current));
+    setCurrent: (currentProject) => {
+        const { children, ...newProject } = currentProject;
+
+        localForage.setItem('current', newProject).then(() => {
+            let stats = DATA.getCurrentStats(newProject.id);
+
+            store.dispatch(setCurrent({
+                ...newProject,
+                total: stats.total,
+                isCompleted: stats.isCompleted,
+            }));
         }).catch((error) => {
             console.log(error);
         });
@@ -476,20 +484,22 @@ const DATA = {
     },
     updateCurrent: (projectId, alt = false) => {
         if (alt) {
-            let project = store.getState().main.projects.find(e => e.id === projectId);
+            if (projectId === store.getState().main.current.id) {
+                let project = store.getState().main.projects.find(e => e.id === projectId);
 
-            let stats = DATA.getCurrentStats(projectId);
+                let stats = DATA.getCurrentStats(projectId);
 
-            const { children, ...newProject } = project;
+                const { children, ...newProject } = project;
 
-            DATA.setCurrent({
-                ...newProject,
-                total: stats.total,
-                isCompleted: stats.isCompleted,
-            });
+                DATA.setCurrent({
+                    ...newProject,
+                    total: stats.total,
+                    isCompleted: stats.isCompleted,
+                });
+            }
         } else {
             if (projectId === store.getState().main.current.id && store.getState().main.projects.length > 0) {
-                let project = store.getState().main.projects.find(e => e.id === projectId);
+                let project = store.getState().main.projects[0];
 
                 const { children, ...filteredProject } = project;
 
@@ -579,7 +589,9 @@ const DATA = {
 
     // Other
     mainLoaded: () => {
-        store.dispatch(setLoading(false));
+        setTimeout(() => {
+            store.dispatch(setLoading(false));
+        }, 200);
     },
     toggleLoading: (value) => {
         return new Promise((resolve, reject) => {
@@ -676,6 +688,9 @@ const DATA = {
                 reject(error);
             });
         });
+    },
+    getBg:()=>{
+        
     },
 };
 

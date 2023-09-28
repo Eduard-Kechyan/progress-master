@@ -8,8 +8,6 @@ import "./Nav.scss";
 
 import CircleChart from '../CircleChart';
 
-import loadingBg from '../../assets/images/loading_background.jpg';
-
 export default function Nav(props) {
   const loading = useSelector((state) => state.main.loading);
   const projects = useSelector((state) => state.main.projects);
@@ -26,7 +24,7 @@ export default function Nav(props) {
 
       {/* Top */}
       <div className="nav_top">
-        <img src={loadingBg} alt="Nav Background" />
+        {/* <img src={loadingBg} alt="Nav Background" />*/}
       </div>
 
       {/* Links */}

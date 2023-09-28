@@ -7,6 +7,8 @@ export const mainSlice = createSlice({
         settings: {
             darkMode: true,
             showReload: false,
+            completedToEnd: true,
+            background: 0
         },
         projects: [],
         tasks: [],

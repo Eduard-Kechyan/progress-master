@@ -25,9 +25,12 @@ const App = () => {
   const location = useLocation();
 
   const settings = useSelector((state) => state.main.settings);
-  
+
   const transitions = useTransition(location, {
-    config: { duration: 100 },
+    config: {
+      duration: 100,
+      precision: 0.0001
+    },
     from: {
       transform: 'translate3d(100%,0,0)'
     },
@@ -95,7 +98,7 @@ const App = () => {
       </>}
 
       {transitions((styles, item) => (
-          <a.div style={styles} className={["layout_wrapper", settings.darkMode ? null : "light_mode"].join(" ")}>
+        <a.div style={styles} className={["layout_wrapper", settings.darkMode ? null : "light_mode"].join(" ")}>
           <Routes location={item}>
             {/* Loading */}
             <Route exact path="/" element={<Loading />} />

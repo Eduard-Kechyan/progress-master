@@ -96,7 +96,8 @@ code {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10;background-color: $main_dark;
+  z-index: 10;
+  background-color: $main_dark;
   &.light_mode {
     background-color: white;
   }

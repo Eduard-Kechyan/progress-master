@@ -13,8 +13,6 @@ import AddBox from '../../components/UnderBox/AddBox';
 
 import CircleChart from '../../components/CircleChart';
 
-import loadingBg from '../../assets/images/background_2.jpg';
-
 export default function Dashboard(props) {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
 
@@ -53,7 +51,7 @@ export default function Dashboard(props) {
       <div className="layout_container">
         {/* Top */}
         <div className="dashboard_top">
-          <img src={loadingBg} alt="Dashboard Top Background" />
+          {!loading && <img src={process.env.PUBLIC_URL + "/images/backgrounds/bg_" + settings.background + ".jpg"} alt="Dashboard Top Background" />}
           <div className="overlay" style={{ backgroundColor: current.accent, opacity: 0.3 }} />
 
           {/* Main */}
@@ -70,12 +68,8 @@ export default function Dashboard(props) {
                     <button
                       key={project.id}
                       className="project_item"
-                      onClick={() => {
-                        const { tasks, ...filteredProject } = project;
-
-                        DATA.setCurrent(filteredProject);
-                      }}>
-                      <CircleChart accent={project.accent} percent={project.percent} size={34} small dark />
+                      onClick={() => { DATA.setCurrent(project); }}>
+                      <CircleChart accent={project.accent} percent={project.percent} size={30} small dark />
                       <span style={{ color: project.accent }}>{project.name}</span>
                     </button>)}
                 </div>

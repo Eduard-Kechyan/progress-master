@@ -57,7 +57,7 @@ export default function Task(props) {
 
                             setTimeout(() => {
                                 setLoadingTask(false);
-                            }, 200);
+                            }, 400);
                         })
                     });
                 } else {
@@ -72,7 +72,7 @@ export default function Task(props) {
 
                                 setTimeout(() => {
                                     setLoadingTask(false);
-                                }, 200);
+                                }, 400);
                             })
                         })
                     })
@@ -179,14 +179,32 @@ export default function Task(props) {
                         }}
                         confirm={() => {
                             if (isProject) {
+                                setLoadingTask(true);
+
                                 DATA.removeProject(project.id).then(() => {
                                     props.closeUnderBox();
+
+                                    onClose();
+
                                     navigate("/dashboard");
+
+                                    setTimeout(() => {
+                                        DATA.toggleLoading(false);
+                                    }, 300);
                                 });
                             } else {
+                                setLoadingTask(true);
+
                                 DATA.removeTask(project.id, current.parentId, current.id, isProject, true).then(() => {
                                     props.closeUnderBox();
+
+                                    onClose();
+
                                     navigate(-1);
+
+                                    setTimeout(() => {
+                                        DATA.toggleLoading(false);
+                                    }, 300);
                                 });
                             }
                         }}
@@ -305,7 +323,7 @@ export default function Task(props) {
                                 </div>}
 
                             {/* Description */}
-                            <h4 className="task_desc" ref={descRef}>
+                            <h4 className="task_desc" ref={descRef} >
                                 {current.desc === "" ? "No description, edit the " + (isProject ? "project" : "task") + " to add one!" : current.desc}
                             </h4>
 

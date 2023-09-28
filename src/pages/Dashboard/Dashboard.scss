@@ -52,15 +52,15 @@ $top_height: 250px;
         left: 0;
         bottom: 0;
         width: 65%;
-        padding: 10px 5px 5px 5px;
+        padding: 5px;
         z-index: 4;
         border-bottom: 4px solid white;
         .name {
             font-size: 18px;
             color: white;
             font-family: Lobster, sans-serif;
-            margin: 0 10px 5px 0;
-            width: calc(100% - 50px);
+            margin: 0 0 5px 0;
+            width: 100%;
             text-align: center;
             padding: 0 45px 0 10px;
             height: 40px;
@@ -102,6 +102,15 @@ $top_height: 250px;
                     right: 0;
                     background-color: white;
                     margin: 0 0 5px 0;
+                    padding: 0 5px;
+                    span {
+                        width: calc(100% - 21px);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        text-align: left;
+                        font-size: 14px;
+                    }
                     .single_chart {
                         margin-top: 5px;
                         margin-right: 5px;
@@ -179,9 +188,9 @@ $top_height: 250px;
         @include button;
         width: 100%;
         font-size: 20px;
-        padding: 0 10px 5px 5px;
-        height: 50px;
-        line-height: 50px;
+        padding: 0 10px 0 0;
+        height: 55px;
+        line-height: 55px;
         background-color: transparent;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         border-radius: 0;
@@ -189,15 +198,13 @@ $top_height: 250px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: calc(100% - 60px);
+            max-width: calc(100% - 70px);
         }
         &:nth-last-child(2) {
             border-bottom: 0;
         }
         .single_chart {
-            margin-top: 10px;
-            margin-right: 5px;
-            margin-left: 5px;
+            margin: 10px 10px 0 5px;
         }
     }
 }

@@ -34,11 +34,3 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(app);
 
 register();
-/*
-if (navigator.serviceWorker) {
-  navigator.serviceWorker.register(serviceWorker).then(() => {
-    console.log("Registered!");
-  }).catch(error => {
-    console.log(error);
-  })
-}*/

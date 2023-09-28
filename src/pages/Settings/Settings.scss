@@ -31,9 +31,8 @@
     }
     .toggle {
         width: 100%;
-        height: 30px;
+        min-height: 30px;
         line-height: 30px;
-        color: $grey_b;
         display: flex;
         margin: 0 0 5px 0;
         .icon {
@@ -42,6 +41,10 @@
             height: 30px;
             margin: 0 5px 0 0;
             transition: 0.3s;
+        }
+        .name {
+            width: calc(100% - 35px);
+            color: $grey_b;
         }
         &.last {
             margin: 0;
@@ -72,4 +75,39 @@
 
 .setting_import_input {
     display: none;
+}
+
+.settings_background {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: -5px;
+}
+
+.settings_bg_item {
+    width: calc(33.333% - 10px);
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    margin: 0 5px 10px 5px;
+    transition: 0.3s;
+    border: 1 solid transparent;
+    outline: 3px solid transparent;
+    border-radius: 4px;
+    position: relative;
+    img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+    }
+    &:active {
+        transform: scale(0.8);
+    }
+    &.selected{
+        outline-color: white;
+    }
 }

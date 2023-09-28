@@ -4,7 +4,7 @@
   "description": "Progress Master PWA",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#323A45",
   "background_color": "#323A45",
   "orientation": "portrait",
   "icons": [
