@@ -63,7 +63,7 @@
     }
 }
 
-.task_count {
+.sub_task_count, .completed_task_count {
     color: $grey;
     text-align: center;
     margin: 0 0 10px 0;

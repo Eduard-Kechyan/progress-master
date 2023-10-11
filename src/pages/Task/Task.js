@@ -344,8 +344,8 @@ export default function Task(props) {
                                 </span>}
                             </div>
 
-                            {/* Sub task count */}
-                            <h4 className="task_count">Sub tasks: [{tasks.length}]</h4>
+                            {/* Completed/Sub task count */}
+                            <h4 className="sub_task_count"><span style={{ color: project.accent }}>{DATA.CheckTaskCompletedCount()}</span>/{tasks.length}</h4>
 
                             {/* Tasks */}
                             <DragDropContext onDragEnd={onDragEnd} onDragStart={() => document.activeElement.blur()}>

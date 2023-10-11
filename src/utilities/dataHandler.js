@@ -452,6 +452,21 @@ const DATA = {
             resolve();
         })
     },
+    CheckTaskCompletedCount: (taskId) => {
+        let count = 0;
+
+        let taskChildren = store.getState().main.tasks.find(e => e.id === taskId).children;
+
+        for (let i = 0; i < taskChildren.length; i++) {
+            let task = store.getState().main.tasks.find(e => e.id === taskId);
+
+            if (task.isCompleted) {
+                count++;
+            }
+        }
+
+        return count;
+    },
 
     // Current
     setCurrent: (currentProject) => {
@@ -689,8 +704,8 @@ const DATA = {
             });
         });
     },
-    getBg:()=>{
-        
+    getBg: () => {
+
     },
 };
 
