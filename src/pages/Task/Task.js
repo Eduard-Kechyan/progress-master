@@ -300,7 +300,6 @@ export default function Task(props) {
                         "Options",
                         <OptionsBox edit={edit} remove={remove} />);
                 }} />
-
             <div className="layout_container">
                 <div className="layout_scroll_box">
                     {loadingTask ? <div className="loader" /> :
@@ -345,7 +344,13 @@ export default function Task(props) {
                             </div>
 
                             {/* Completed/Sub task count */}
-                            <h4 className="sub_task_count"><span style={{ color: project.accent }}>{DATA.CheckTaskCompletedCount()}</span>/{tasks.length}</h4>
+                            <h4 className="sub_task_count">
+                                <span>Completed</span>
+                                <span style={{ color: project.accent }}>{DATA.CheckTaskCompletedCount(project.id, current.id, isProject)}</span>
+                                <span>of</span>
+                                <span style={{ color: project.accent }}>{tasks.length}</span>
+                                <span>tasks</span>
+                            </h4>
 
                             {/* Tasks */}
                             <DragDropContext onDragEnd={onDragEnd} onDragStart={() => document.activeElement.blur()}>

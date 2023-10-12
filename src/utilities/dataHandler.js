@@ -266,7 +266,6 @@ const DATA = {
 
             let task = store.getState().main.tasks.find(e => e.id === taskId);
 
-            console.log(editedTask);
             let newTask = { ...task, ...editedTask };
 
             store.dispatch(editTask(newTask));
@@ -452,13 +451,19 @@ const DATA = {
             resolve();
         })
     },
-    CheckTaskCompletedCount: (taskId) => {
+    CheckTaskCompletedCount: (projectId, taskId, isProject) => {
         let count = 0;
 
-        let taskChildren = store.getState().main.tasks.find(e => e.id === taskId).children;
+        let children;
 
-        for (let i = 0; i < taskChildren.length; i++) {
-            let task = store.getState().main.tasks.find(e => e.id === taskId);
+        if (isProject) {
+            children = store.getState().main.projects.find(e => e.id === projectId).children;
+        } else {
+            children = store.getState().main.tasks.find(e => e.id === taskId).children;
+        }
+
+        for (let i = 0; i < children.length; i++) {
+            let task = store.getState().main.tasks.find(e => e.id === children[i]);
 
             if (task.isCompleted) {
                 count++;

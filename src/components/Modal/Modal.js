@@ -1,18 +1,18 @@
-import React ,{useEffect,useRef}from 'react';
+import React, { useEffect, useRef } from 'react';
 import "./Modal.scss";
 
 export default function Modal(props) {
     const modalRef = useRef(null);
+
+    useEffect(() => {
+        modalRef.current.focus();
+    }, [])
 
     const handleEnter = (event) => {
         if (event.key === 'Enter') {
             props.confirm();
         }
     }
-
-    useEffect(() => {
-        modalRef.current.focus();
-    }, [])
 
     return (
         <div className="modal_wrapper" onKeyDown={handleEnter} tabIndex="0" ref={modalRef}>
