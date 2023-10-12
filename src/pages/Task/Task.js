@@ -25,6 +25,7 @@ export default function Task(props) {
     const [isProject, setIsProject] = useState(true);
     const [project, setProject] = useState(null);
     const [current, setCurrent] = useState(null);
+    const [subTaskCompletedCount, setSubTaskCompletedCount] = useState(0);
 
     const descRef = useRef(null);
 
@@ -55,6 +56,8 @@ export default function Task(props) {
 
                             setBreadcrumbs(projectValue, true);
 
+                            setSubTaskCompletedCount(DATA.CheckTaskCompletedCount(project.id, current.id, isProject));
+
                             setTimeout(() => {
                                 setLoadingTask(false);
                             }, 400);
@@ -69,6 +72,8 @@ export default function Task(props) {
                                 setCurrent(taskValue);
 
                                 setBreadcrumbs(taskValue);
+
+                                setSubTaskCompletedCount(DATA.CheckTaskCompletedCount(project.id, current.id, isProject));
 
                                 setTimeout(() => {
                                     setLoadingTask(false);
@@ -346,10 +351,13 @@ export default function Task(props) {
                             {/* Completed/Sub task count */}
                             <h4 className="sub_task_count">
                                 <span>Completed</span>
-                                <span style={{ color: project.accent }}>{DATA.CheckTaskCompletedCount(project.id, current.id, isProject)}</span>
+                                <span style={{ color: project.accent }}>{subTaskCompletedCount}</span>
                                 <span>of</span>
                                 <span style={{ color: project.accent }}>{tasks.length}</span>
-                                <span>tasks</span>
+                                <span>tasks.</span>
+                                <span>(</span>
+                                <span style={{ color: project.accent }}>{tasks.length-subTaskCompletedCount}</span>
+                                <span>left)</span>
                             </h4>
 
                             {/* Tasks */}
